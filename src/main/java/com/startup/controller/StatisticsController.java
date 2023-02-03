@@ -1,4 +1,4 @@
-package com.startup.controller.statistics;
+package com.startup.controller;
 
 import com.startup.service.StatisticsService;
 import org.springframework.http.ResponseEntity;

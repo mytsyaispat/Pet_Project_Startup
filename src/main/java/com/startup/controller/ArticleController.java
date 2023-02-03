@@ -1,5 +1,6 @@
-package com.startup.controller.article;
+package com.startup.controller;
 
+import com.startup.controller.entity.ArticleRequest;
 import com.startup.entity.Article;
 import com.startup.service.ArticleService;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,8 @@ public class ArticleController {
     }
 
     @PostMapping("article")
-    public ResponseEntity<?> createArticle(@Valid @RequestBody Article article, @AuthenticationPrincipal User user) {
-        article.setAuthor(user.getUsername());
-        return articleService.createArticle(article);
+    public ResponseEntity<?> createArticle(@Valid @RequestBody ArticleRequest articleRequest, @AuthenticationPrincipal User user) {
+        return articleService.createArticle(articleRequest, user.getUsername());
     }
 
     @GetMapping("articles")

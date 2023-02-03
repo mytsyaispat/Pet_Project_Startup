@@ -1,6 +1,9 @@
 package com.startup.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.ArrayList;
@@ -15,18 +18,14 @@ public class Category {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id")
-    private List<Article> articleList = new ArrayList<>();
 
-    public Category(Article article) {
-        this.name = article.getCategory();
-        articleList.add(article);
+    public Category(String name) {
+        this.name = name;
     }
 
-    public Category(String name, List<Article> articleList) {
+    public Category(Long id, String name) {
+        this.id = id;
         this.name = name;
-        this.articleList = new ArrayList<>(articleList);
     }
 
     public Category() {}
@@ -35,6 +34,7 @@ public class Category {
         return id;
     }
 
+    @JsonIgnore
     public void setId(Long id) {
         this.id = id;
     }
@@ -43,19 +43,8 @@ public class Category {
         return name;
     }
 
+    @JsonProperty(value = "category")
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Article> getArticleList() {
-        return articleList;
-    }
-
-    public void setArticleList(List<Article> articleList) {
-        this.articleList = articleList;
-    }
-
-    public void addArticleToList(Article article) {
-        articleList.add(article);
     }
 }

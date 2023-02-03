@@ -4,6 +4,8 @@ import com.startup.entity.Article;
 import com.startup.entity.Category;
 import com.startup.repository.CategoryRepository;
 import com.startup.service.CategoryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,14 +30,16 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
     }
 
-    public Category getCategoryIfExistsElseCreate(Article article) {
-        Category category = categoryRepository.findByName(article.getCategory());
-        if (category != null) {
-            category.addArticleToList(article);
-        } else {
-            category = new Category(article);
+    @Override
+    public ResponseEntity<String> createCategory(Category category) {
+        if (categoryRepository.findByName(category.getName()) == null) {
+            categoryRepository.save(category);
+            return ResponseEntity.ok("Category was successfully added!");
         }
-        return category;
+        return new ResponseEntity<>("You are trying to add an existing category!", HttpStatus.CONFLICT);
     }
 
+    public Category findByName(String name) {
+        return categoryRepository.findByName(name);
+    }
 }

@@ -3,6 +3,8 @@ package com.startup.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.startup.controller.entity.ArticleRequest;
+import com.startup.repository.CategoryRepository;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -33,18 +35,25 @@ public class Article {
     private String content;
     @Column(nullable = false)
     private LocalDateTime date = LocalDateTime.now();
-    @Transient
-    @NotBlank(message = "Category must not be empty!")
-    @JsonProperty(value = "category")
-    private String category;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     public Article() {}
 
-    public Article(String title, String author, String content, LocalDateTime date, String category) {
+    public Article(String title, String author, String content, LocalDateTime date, Category category) {
         this.title = title;
         this.author = author;
         this.content = content;
         this.date = date;
+        this.category = category;
+    }
+
+    public Article(ArticleRequest articleRequest, Category category, String author) {
+        this.title = articleRequest.getTitle();
+        this.author = author;
+        this.content = articleRequest.getContent();
         this.category = category;
     }
 
@@ -92,12 +101,11 @@ public class Article {
         this.date = date;
     }
 
-    @JsonIgnore
-    public String getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 

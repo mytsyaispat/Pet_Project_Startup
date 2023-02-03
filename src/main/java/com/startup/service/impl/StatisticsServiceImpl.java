@@ -56,7 +56,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public Map<String, Long> createStatisticsByCategory(List<Category> categoryList) {
         return categoryList.stream()
                 .collect(Collectors.toMap(Category::getName,
-                        category -> (long) category.getArticleList().size()));
+                        category -> (long) articleService.getArticleListByCategory(category.getId()).size()));
     }
 
     @Override
