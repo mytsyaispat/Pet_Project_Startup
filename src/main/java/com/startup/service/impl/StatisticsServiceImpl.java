@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,4 +73,26 @@ public class StatisticsServiceImpl implements StatisticsService {
         return articleList.stream()
                 .collect(Collectors.groupingBy(Article::getAuthor, Collectors.counting()));
     }
+
+    @Override
+    public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
+        if (firstDate.isAfter(secondDate)) {
+            LocalDate swap = firstDate;
+            firstDate = secondDate;
+            secondDate = swap;
+        }
+        List<Article> articleList = articleService.getArticleList();
+        Map<LocalDate, Long> body = new HashMap<>();
+        for (; firstDate.isBefore(secondDate) || firstDate.isEqual(secondDate); firstDate = firstDate.plusDays(1)) {
+            body.put(firstDate, getCountOfArticle(articleList, firstDate));
+        }
+        return ResponseEntity.ok(body);
+    }
+
+    private Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
+        return articleList.stream()
+                .filter(article -> article.getDate().toLocalDate().isEqual(firstDate))
+                .count();
+    }
+
 }

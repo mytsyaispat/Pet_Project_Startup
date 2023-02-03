@@ -41,6 +41,7 @@ class IntegrationTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 4, 5})
     @DisplayName("test1-6 addCorrectArticles1")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void addCorrectArticles1(int counter) {
         articleRepository.deleteAll();
         articleRepository.save(Values.correctArticles[counter]);
@@ -51,6 +52,7 @@ class IntegrationTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 4})
     @DisplayName("test7-12 addCorrectArticles2")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void addCorrectArticles2(int counter) {
         articleRepository.deleteAll();
         articleRepository.save(Values.correctArticles[counter]);
@@ -61,6 +63,7 @@ class IntegrationTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2})
     @DisplayName("test13-15 tryToAddIncorrectArticles")
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void tryToSaveIncorrectArticles(int counter) {
         articleRepository.deleteAll();
         Assertions.assertThrows(ConstraintViolationException.class, () -> {
