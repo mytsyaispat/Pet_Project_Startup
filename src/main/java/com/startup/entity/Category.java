@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Cacheable
-@org.hibernate.annotations.Cache(usage =
-        CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "category")
 public class Category {
 
