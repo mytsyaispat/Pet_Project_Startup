@@ -1,11 +1,11 @@
-package com.startup.service;
+package com.startup.Logic.service;
 
-import com.startup.controller.entity.ArticleRequest;
-import com.startup.entity.Article;
+import com.startup.Logic.controller.entity.ArticleRequest;
+import com.startup.Logic.entity.Article;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 public interface ArticleService {
 

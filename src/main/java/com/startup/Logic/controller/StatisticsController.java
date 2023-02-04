@@ -1,6 +1,8 @@
-package com.startup.controller;
+package com.startup.Logic.controller;
 
-import com.startup.service.StatisticsService;
+import com.startup.Logic.controller.entity.DateRequest;
+
+import com.startup.Logic.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +13,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 @RestController
-@RequestMapping("startup/admin/statistics/")
+@RequestMapping("admin/statistics/")
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
@@ -20,7 +22,7 @@ public class StatisticsController {
         this.statisticsService = statisticsService;
     }
 
-    @GetMapping("week")
+    @GetMapping("date/week")
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
         return statisticsService.getStatisticsForTheLastWeek();
     }
@@ -35,8 +37,8 @@ public class StatisticsController {
         return statisticsService.getStatisticsByAuthor();
     }
 
-    @GetMapping("date-between")
-    public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(@RequestBody Map<String, String> date) {
-        return statisticsService.getStatisticsBetweenDate(LocalDate.parse(date.get("first_date")), LocalDate.parse(date.get("second_date")));
+    @GetMapping("date/between")
+    public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(@RequestBody DateRequest dateRequest) {
+        return statisticsService.getStatisticsBetweenDate(dateRequest.getFirstDate(), dateRequest.getSecondDate());
     }
 }

@@ -1,12 +1,8 @@
-package com.startup.service;
+package com.startup.Logic.service;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
+import com.startup.Logic.entity.Category;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
 import java.util.List;
 
 public interface CategoryService {

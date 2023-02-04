@@ -1,12 +1,12 @@
 package com.startup;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
-import com.startup.repository.ArticleRepository;
-import com.startup.repository.CategoryRepository;
-import com.startup.service.ArticleService;
-import com.startup.service.CategoryService;
-import com.startup.service.StatisticsService;
+import com.startup.Logic.entity.Article;
+import com.startup.Logic.entity.Category;
+import com.startup.Logic.repository.ArticleRepository;
+import com.startup.Logic.repository.CategoryRepository;
+import com.startup.Logic.service.ArticleService;
+import com.startup.Logic.service.CategoryService;
+import com.startup.Logic.service.StatisticsService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,6 @@ class IntegrationTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 4, 5})
     @DisplayName("test1-6 addCorrectArticles1")
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     void addCorrectArticles1(int counter) {
         articleRepository.deleteAll();
         articleRepository.save(Values.correctArticles[counter]);
@@ -80,5 +79,12 @@ class IntegrationTest {
                 Map.of("Category1", 5L, "Category2", 3L, "Category3", 4L, "Category4", 7L));
     }
 
+    @Test
+    @DisplayName("test21 checkStatisticsMethodByCategory2")
+    void checkStatisticsMethodByCategory2() {
+        List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArrayForStatistics));
+        Assertions.assertNotEquals(statisticsService.createStatisticsByCategory(categoryList),
+                Map.of("Category1", 2L, "Category2", 0L, "Category3", 9L, "Category4", 6L));
+    }
 
 }

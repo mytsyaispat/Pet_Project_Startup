@@ -1,10 +1,10 @@
-package com.startup.service.impl;
+package com.startup.Logic.service.impl;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
-import com.startup.service.ArticleService;
-import com.startup.service.CategoryService;
-import com.startup.service.StatisticsService;
+import com.startup.Logic.entity.Article;
+import com.startup.Logic.entity.Category;
+import com.startup.Logic.service.ArticleService;
+import com.startup.Logic.service.CategoryService;
+import com.startup.Logic.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,10 @@ public class StatisticsServiceImpl implements StatisticsService {
         this.categoryService = categoryService;
     }
 
+    /**
+     * Метод возвращает мапу в которой хранится статистика в виде Дата -> Количество созданных статей за дату.
+     * Статистика собирается за последнюю неделю
+    * */
     @Override
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
         List<Article> articleList = articleService.findArticlesForTheLastSevenDays();
@@ -45,6 +49,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                                 .count()));
     }
 
+    /**
+     * Метод возвращает мапу в которой хранится статистика в виде Категория -> Количество созданных статей по категории.
+     * Статистика собирается за всё время
+     * */
     @Override
     public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
         List<Category> categoryList = categoryService.getCategoryList();
@@ -60,6 +68,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                         category -> (long) articleService.getArticleListByCategory(category.getId()).size()));
     }
 
+    /**
+     * Метод возвращает мапу в которой хранится статистика в виде Автор -> Количество созданных статей автором.
+     * Статистика собирается за всё время
+     * */
     @Override
     public ResponseEntity<Map<String, Long>> getStatisticsByAuthor() {
         List<Article> articleList = articleService.getArticleList();
@@ -71,9 +83,13 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public Map<String, Long> createStatisticsByAuthor(List<Article> articleList) {
         return articleList.stream()
-                .collect(Collectors.groupingBy(Article::getAuthor, Collectors.counting()));
+                .collect(Collectors.groupingBy(article -> article.getUser().getUsername(), Collectors.counting()));
     }
 
+    /**
+     * Метод возвращает мапу в которой хранится статистика в виде Дата -> Количество созданных статей за дату.
+     * Статистика собирается в промежутке переданных дат (включительно) в параметрах метода
+     * */
     @Override
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
         if (firstDate.isAfter(secondDate)) {

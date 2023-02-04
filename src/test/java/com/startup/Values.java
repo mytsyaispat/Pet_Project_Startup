@@ -1,7 +1,7 @@
 package com.startup;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
+import com.startup.Logic.entity.Article;
+import com.startup.Logic.entity.Category;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

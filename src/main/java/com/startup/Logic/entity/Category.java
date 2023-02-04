@@ -1,13 +1,9 @@
-package com.startup.entity;
+package com.startup.Logic.entity;
 
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "category")

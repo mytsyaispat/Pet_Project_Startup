@@ -1,4 +1,4 @@
-package com.startup.controller.entity;
+package com.startup.Logic.controller.entity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

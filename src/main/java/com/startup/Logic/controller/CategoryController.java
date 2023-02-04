@@ -1,17 +1,15 @@
-package com.startup.controller;
+package com.startup.Logic.controller;
 
-import com.startup.entity.Category;
-import com.startup.service.CategoryService;
+import com.startup.Logic.entity.Category;
+import com.startup.Logic.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("startup/")
 public class CategoryController {
 
     private final CategoryService categoryService;

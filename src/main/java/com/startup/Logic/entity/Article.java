@@ -1,10 +1,9 @@
-package com.startup.entity;
+package com.startup.Logic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.startup.controller.entity.ArticleRequest;
-import com.startup.repository.CategoryRepository;
+import com.startup.Logic.controller.entity.ArticleRequest;
+import com.startup.auth.entity.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -29,8 +28,6 @@ public class Article {
     @Size(max = 100, message = "Title should not exceed 100 characters!")
     private String title;
     @Column(nullable = false)
-    private String author;
-    @Column(nullable = false)
     @NotBlank(message = "Content must not be empty!")
     private String content;
     @Column(nullable = false)
@@ -40,21 +37,24 @@ public class Article {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Article() {}
 
-    public Article(String title, String author, String content, LocalDateTime date, Category category) {
+    public Article(String title, String content, LocalDateTime date, Category category, User user) {
         this.title = title;
-        this.author = author;
         this.content = content;
         this.date = date;
         this.category = category;
     }
 
-    public Article(ArticleRequest articleRequest, Category category, String author) {
+    public Article(ArticleRequest articleRequest, Category category, User user) {
         this.title = articleRequest.getTitle();
-        this.author = author;
         this.content = articleRequest.getContent();
         this.category = category;
+        this.user = user;
     }
 
     @JsonIgnore
@@ -73,15 +73,6 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    @JsonIgnore
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public String getContent() {
@@ -109,6 +100,14 @@ public class Article {
         this.category = category;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,18 +117,18 @@ public class Article {
 
         if (!Objects.equals(id, article.id)) return false;
         if (!Objects.equals(title, article.title)) return false;
-        if (!Objects.equals(author, article.author)) return false;
         if (!Objects.equals(content, article.content)) return false;
-        return Objects.equals(date, article.date);
+        if (!Objects.equals(date, article.date)) return false;
+        return Objects.equals(category, article.category);
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (author != null ? author.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
         return result;
     }
 }

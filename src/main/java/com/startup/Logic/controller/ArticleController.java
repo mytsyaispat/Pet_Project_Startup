@@ -1,8 +1,8 @@
-package com.startup.controller;
+package com.startup.Logic.controller;
 
-import com.startup.controller.entity.ArticleRequest;
-import com.startup.entity.Article;
-import com.startup.service.ArticleService;
+import com.startup.Logic.controller.entity.ArticleRequest;
+import com.startup.Logic.entity.Article;
+import com.startup.Logic.service.ArticleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -12,7 +12,6 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("startup/")
 public class ArticleController {
 
     private final ArticleService articleService;

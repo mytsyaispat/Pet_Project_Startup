@@ -1,15 +1,14 @@
 package com.startup;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
-import com.startup.repository.ArticleRepository;
-import com.startup.repository.CategoryRepository;
-import com.startup.service.ArticleService;
-import com.startup.service.CategoryService;
-import com.startup.service.StatisticsService;
-import com.startup.service.impl.ArticleServiceImpl;
-import com.startup.service.impl.CategoryServiceImpl;
-import com.startup.service.impl.StatisticsServiceImpl;
+import com.startup.Logic.entity.Article;
+import com.startup.Logic.repository.ArticleRepository;
+import com.startup.Logic.repository.CategoryRepository;
+import com.startup.Logic.service.ArticleService;
+import com.startup.Logic.service.CategoryService;
+import com.startup.Logic.service.StatisticsService;
+import com.startup.Logic.service.impl.ArticleServiceImpl;
+import com.startup.Logic.service.impl.CategoryServiceImpl;
+import com.startup.Logic.service.impl.StatisticsServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,14 +70,6 @@ public class UnitTests {
                 now.minusDays(1), 2L, now.minusDays(2), 1L,
                 now.minusDays(3), 7L, now.minusDays(4), 1L,
                 now.minusDays(5), 5L, now.minusDays(6), 0L));
-    }
-
-    @Test
-    @DisplayName("test21 checkStatisticsMethodByCategory2")
-    void checkStatisticsMethodByCategory2() {
-        List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArrayForStatistics));
-        Assertions.assertNotEquals(statisticsService.createStatisticsByCategory(categoryList),
-                Map.of("Category1", 2L, "Category2", 0L, "Category3", 9L, "Category4", 6L));
     }
 
     @Test

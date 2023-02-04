@@ -1,15 +1,13 @@
-package com.startup.service.impl;
+package com.startup.Logic.service.impl;
 
-import com.startup.entity.Article;
-import com.startup.entity.Category;
-import com.startup.repository.CategoryRepository;
-import com.startup.service.CategoryService;
+import com.startup.Logic.entity.Category;
+import com.startup.Logic.repository.CategoryRepository;
+import com.startup.Logic.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -30,6 +28,9 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.save(category);
     }
 
+    /**
+     * Метод создаёт категорию в базе данных если такой статьи ещё нет, в противном случае не создаёт
+     * */
     @Override
     public ResponseEntity<String> createCategory(Category category) {
         if (categoryRepository.findByName(category.getName()) == null) {
