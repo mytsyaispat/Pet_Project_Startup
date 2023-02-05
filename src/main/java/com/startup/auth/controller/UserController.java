@@ -2,7 +2,6 @@ package com.startup.auth.controller;
 
 import com.startup.auth.entity.User;
 import com.startup.auth.service.UserService;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
