@@ -1,6 +1,6 @@
 package com.startup.auth.service.impl;
 
-import com.startup.Logic.entity.Roles;
+import com.startup.logic.entity.Roles;
 import com.startup.auth.entity.User;
 import com.startup.auth.entity.UserDetailsImpl;
 import com.startup.auth.repository.UserRepository;
@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<String> register(User user) {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");

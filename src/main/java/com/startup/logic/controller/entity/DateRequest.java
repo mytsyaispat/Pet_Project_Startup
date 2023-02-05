@@ -1,4 +1,4 @@
-package com.startup.Logic.controller.entity;
+package com.startup.logic.controller.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

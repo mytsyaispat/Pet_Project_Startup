@@ -1,23 +1,21 @@
-package com.startup.Logic.service.impl;
+package com.startup.logic.service.impl;
 
-import com.startup.Logic.controller.entity.ArticleRequest;
-import com.startup.Logic.entity.Article;
-import com.startup.Logic.entity.Category;
-import com.startup.Logic.repository.ArticleRepository;
-import com.startup.Logic.service.ArticleService;
-import com.startup.Logic.service.CategoryService;
+import com.startup.logic.controller.entity.ArticleRequest;
+import com.startup.logic.entity.Article;
+import com.startup.logic.entity.Category;
+import com.startup.logic.repository.ArticleRepository;
+import com.startup.logic.service.ArticleService;
+import com.startup.logic.service.CategoryService;
 import com.startup.auth.entity.User;
 import com.startup.auth.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {

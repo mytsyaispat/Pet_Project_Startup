@@ -1,4 +1,4 @@
-package com.startup.Logic.entity;
+package com.startup.logic.entity;
 
 import javax.persistence.*;
 

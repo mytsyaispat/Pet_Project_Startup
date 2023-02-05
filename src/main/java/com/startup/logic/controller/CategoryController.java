@@ -1,7 +1,7 @@
-package com.startup.Logic.controller;
+package com.startup.logic.controller;
 
-import com.startup.Logic.entity.Category;
-import com.startup.Logic.service.CategoryService;
+import com.startup.logic.entity.Category;
+import com.startup.logic.service.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

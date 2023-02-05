@@ -1,8 +1,8 @@
-package com.startup.Logic.controller;
+package com.startup.logic.controller;
 
-import com.startup.Logic.controller.entity.DateRequest;
+import com.startup.logic.controller.entity.DateRequest;
 
-import com.startup.Logic.service.StatisticsService;
+import com.startup.logic.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;

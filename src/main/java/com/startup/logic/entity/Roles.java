@@ -1,4 +1,4 @@
-package com.startup.Logic.entity;
+package com.startup.logic.entity;
 
 public enum Roles {
     ADMIN, USER

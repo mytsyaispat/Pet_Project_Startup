@@ -1,7 +1,7 @@
-package com.startup.Logic.service;
+package com.startup.logic.service;
 
-import com.startup.Logic.controller.entity.ArticleRequest;
-import com.startup.Logic.entity.Article;
+import com.startup.logic.controller.entity.ArticleRequest;
+import com.startup.logic.entity.Article;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

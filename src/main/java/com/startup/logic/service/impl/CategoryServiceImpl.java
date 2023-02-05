@@ -1,11 +1,13 @@
-package com.startup.Logic.service.impl;
+package com.startup.logic.service.impl;
 
-import com.startup.Logic.entity.Category;
-import com.startup.Logic.repository.CategoryRepository;
-import com.startup.Logic.service.CategoryService;
+import com.startup.logic.entity.Category;
+import com.startup.logic.repository.CategoryRepository;
+import com.startup.logic.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,6 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void saveCategory(Category category) {
         categoryRepository.save(category);
     }
@@ -32,12 +35,13 @@ public class CategoryServiceImpl implements CategoryService {
      * Метод создаёт категорию в базе данных если такой статьи ещё нет, в противном случае не создаёт
      * */
     @Override
+    @Transactional
     public ResponseEntity<String> createCategory(Category category) {
         if (categoryRepository.findByName(category.getName()) == null) {
             categoryRepository.save(category);
             return ResponseEntity.ok("Category was successfully added!");
         }
-        return new ResponseEntity<>("You are trying to add an existing category!", HttpStatus.CONFLICT);
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "You are trying to add an existing category!");
     }
 
     public Category findByName(String name) {

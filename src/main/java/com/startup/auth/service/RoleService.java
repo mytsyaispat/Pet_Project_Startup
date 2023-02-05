@@ -10,5 +10,6 @@ public interface RoleService {
     ResponseEntity<?> createRole(Role role);
 
     Optional<Role> findRole(String role);
+    Optional<Role> findById(Long id);
 
 }

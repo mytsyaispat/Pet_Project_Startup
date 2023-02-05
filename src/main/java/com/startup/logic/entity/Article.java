@@ -1,8 +1,8 @@
-package com.startup.Logic.entity;
+package com.startup.logic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.startup.Logic.controller.entity.ArticleRequest;
+import com.startup.logic.controller.entity.ArticleRequest;
 import com.startup.auth.entity.User;
 
 import javax.persistence.*;
@@ -48,6 +48,7 @@ public class Article {
         this.content = content;
         this.date = date;
         this.category = category;
+        this.user = user;
     }
 
     public Article(ArticleRequest articleRequest, Category category, User user) {

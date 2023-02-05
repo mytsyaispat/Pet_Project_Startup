@@ -1,5 +1,5 @@
-package com.startup.Logic.repository;
-import com.startup.Logic.entity.Category;
+package com.startup.logic.repository;
+import com.startup.logic.entity.Category;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

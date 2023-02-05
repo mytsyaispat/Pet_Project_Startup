@@ -1,6 +1,6 @@
-package com.startup.Logic.service;
+package com.startup.logic.service;
 
-import com.startup.Logic.entity.Category;
+import com.startup.logic.entity.Category;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

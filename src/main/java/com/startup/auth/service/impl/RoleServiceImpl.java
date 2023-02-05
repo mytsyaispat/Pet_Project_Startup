@@ -6,6 +6,7 @@ import com.startup.auth.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -20,6 +21,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<?> createRole(Role role) {
         Optional<Role> roleOptional = roleRepository.findByName(role.getName());
         if (roleOptional.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This role has already been created!");
@@ -31,4 +33,10 @@ public class RoleServiceImpl implements RoleService {
     public Optional<Role> findRole(String role) {
         return roleRepository.findByName(role);
     }
+
+    @Override
+    public Optional<Role> findById(Long id) {
+        return roleRepository.findById(id);
+    }
+
 }

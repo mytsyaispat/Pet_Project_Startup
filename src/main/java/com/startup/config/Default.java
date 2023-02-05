@@ -1,6 +1,6 @@
 package com.startup.config;
 
-import com.startup.Logic.entity.Roles;
+import com.startup.logic.entity.Roles;
 import com.startup.auth.entity.Role;
 import com.startup.auth.entity.User;
 import com.startup.auth.service.RoleService;
@@ -10,7 +10,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -36,6 +36,8 @@ public class Default {
             roleService.createRole(new Role(Roles.ADMIN.name()));
             roleService.createRole(new Role(Roles.USER.name()));
         }
+        Optional<Role> optional = roleService.findRole(Roles.ADMIN.name());
+        optional.ifPresent(role -> System.out.println(role.getName()));
     }
     @Transactional
     private void createAdminIfNotCreated() {

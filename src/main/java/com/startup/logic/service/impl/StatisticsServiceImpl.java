@@ -1,10 +1,10 @@
-package com.startup.Logic.service.impl;
+package com.startup.logic.service.impl;
 
-import com.startup.Logic.entity.Article;
-import com.startup.Logic.entity.Category;
-import com.startup.Logic.service.ArticleService;
-import com.startup.Logic.service.CategoryService;
-import com.startup.Logic.service.StatisticsService;
+import com.startup.logic.entity.Article;
+import com.startup.logic.entity.Category;
+import com.startup.logic.service.ArticleService;
+import com.startup.logic.service.CategoryService;
+import com.startup.logic.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -56,16 +56,19 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
         List<Category> categoryList = categoryService.getCategoryList();
+        List<Article> articleList = articleService.getArticleList();
         if (categoryList.isEmpty()) return ResponseEntity.ok(Collections.emptyMap());
-        Map<String, Long> statistics = createStatisticsByCategory(categoryList);
+        Map<String, Long> statistics = createStatisticsByCategory(categoryList, articleList);
         return ResponseEntity.ok(statistics);
     }
 
     @Override
-    public Map<String, Long> createStatisticsByCategory(List<Category> categoryList) {
+    public Map<String, Long> createStatisticsByCategory(List<Category> categoryList, List<Article> articleList) {
         return categoryList.stream()
                 .collect(Collectors.toMap(Category::getName,
-                        category -> (long) articleService.getArticleListByCategory(category.getId()).size()));
+                        category -> articleList.stream()
+                                .filter(article -> article.getCategory().getName().equals(category.getName()))
+                                .count()));
     }
 
     /**

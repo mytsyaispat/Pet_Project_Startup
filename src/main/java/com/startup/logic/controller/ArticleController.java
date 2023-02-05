@@ -1,8 +1,8 @@
-package com.startup.Logic.controller;
+package com.startup.logic.controller;
 
-import com.startup.Logic.controller.entity.ArticleRequest;
-import com.startup.Logic.entity.Article;
-import com.startup.Logic.service.ArticleService;
+import com.startup.logic.controller.entity.ArticleRequest;
+import com.startup.logic.entity.Article;
+import com.startup.logic.service.ArticleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
