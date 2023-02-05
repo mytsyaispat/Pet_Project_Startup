@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "role")
+@Table(name = "roles")
 public class Role {
 
     @Id
@@ -14,8 +14,6 @@ public class Role {
     private Long id;
     @Column(unique = true)
     private String name;
-    @ManyToMany
-    private List<User> userList;
 
     public Role() {}
 
@@ -38,14 +36,5 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    @JsonIgnore
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
     }
 }

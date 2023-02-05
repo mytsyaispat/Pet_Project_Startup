@@ -1,14 +1,12 @@
 package com.startup.auth.service.impl;
 
 import com.startup.Logic.entity.Roles;
-import com.startup.auth.entity.Role;
 import com.startup.auth.entity.User;
 import com.startup.auth.entity.UserDetailsImpl;
 import com.startup.auth.repository.UserRepository;
+import com.startup.auth.service.RoleService;
 import com.startup.auth.service.UserService;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,18 +15,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
-    public UserServiceImpl(@Lazy PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserServiceImpl(@Lazy PasswordEncoder passwordEncoder, UserRepository userRepository, RoleService roleService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoleList(List.of(new Role(Roles.USER.name())));
+        user.setRoles(Set.of(roleService.findRole(Roles.USER.name()).get()));
         userRepository.save(user);
         return ResponseEntity.ok("User successfully registered!");
     }

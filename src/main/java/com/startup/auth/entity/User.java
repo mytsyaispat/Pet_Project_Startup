@@ -2,8 +2,8 @@ package com.startup.auth.entity;
 
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -16,12 +16,16 @@ public class User {
     @Column(nullable = false)
     private String password;
     @ManyToMany
-    private List<Role> roleList;
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
-    public User(String username, String password, List<Role> roleList) {
+    public User(String username, String password, Set<Role> roleList) {
         this.username = username.toLowerCase();
         this.password = password;
-        this.roleList = new ArrayList<>(roleList);
+        this.roles = new HashSet<>(roleList);
     }
 
     public User() {}
@@ -50,12 +54,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Role> getRoleList() {
-        return roleList;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRoleList(List<Role> roleList) {
-        this.roleList = roleList;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
 

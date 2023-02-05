@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class Default {
@@ -39,7 +40,7 @@ public class Default {
     @Transactional
     private void createAdminIfNotCreated() {
         if (userService.findAdmin().isEmpty()) {
-            userService.register(new User("admin", "admin", List.of(new Role("ADMIN"))));
+            userService.register(new User("admin", "admin", Set.of(roleService.findRole(Roles.ADMIN.name()).get())));
         }
     }
 

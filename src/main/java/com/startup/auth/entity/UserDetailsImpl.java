@@ -17,7 +17,7 @@ public class UserDetailsImpl implements UserDetails {
     public UserDetailsImpl(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.roleList = new ArrayList<>(user.getRoleList());
+        this.roleList = new ArrayList<>(user.getRoles());
     }
 
     @Override
