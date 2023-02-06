@@ -31,7 +31,6 @@ dependencies {
 	implementation 'org.hibernate:hibernate-core'
 	// Hibernate cache
 	implementation 'org.hibernate:hibernate-ehcache'
-	implementation 'net.sf.ehcache:ehcache-core'
 	// Test
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 	// JUnit5
