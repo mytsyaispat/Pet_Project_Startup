@@ -27,7 +27,7 @@ public class UnitTestsStatisticsServiceMethods {
     StatisticsService statisticsService = new StatisticsServiceImpl(articleService, categoryService);
 
     @Test
-    @DisplayName("test1 -> createStatisticsForTheLastWeek")
+    @DisplayName("test1 -> createStatisticsForTheLastWeek method")
     void checkCorrectOutputStatisticsTest1() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticles));
         LocalDate now = LocalDate.now();
@@ -38,7 +38,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test2 -> createStatisticsForTheLastWeek")
+    @DisplayName("test2 -> createStatisticsForTheLastWeek method")
     void checkCorrectOutputStatisticsTest2() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticles));
         LocalDate now = LocalDate.now();
@@ -49,7 +49,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test3 -> createStatisticsForTheLastWeek")
+    @DisplayName("test3 -> createStatisticsForTheLastWeek method")
     void checkCorrectOutputStatisticsTest3() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticlesForStatistics));
         LocalDate now = LocalDate.now();
@@ -60,7 +60,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test4 -> createStatisticsForTheLastWeek")
+    @DisplayName("test4 -> createStatisticsForTheLastWeek method")
     void checkCorrectOutputStatisticsTest4() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticlesForStatistics));
         LocalDate now = LocalDate.now();
@@ -71,7 +71,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test5 -> createStatisticsByCategory")
+    @DisplayName("test5 -> createStatisticsByCategory method")
     void checkCorrectOutputStatisticsTest5() {
         List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArray));
         Assertions.assertEquals(statisticsService.createStatisticsByCategory(categoryList, Arrays.asList(Values.correctArticlesForStatistics)),
@@ -79,7 +79,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test6 -> createStatisticsByCategory")
+    @DisplayName("test6 -> createStatisticsByCategory method")
     void checkCorrectOutputStatisticsTest6() {
         List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArray));
         Assertions.assertNotEquals(statisticsService.createStatisticsByCategory(categoryList, Arrays.asList(Values.correctArticlesForStatistics)),
@@ -87,21 +87,21 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test7 -> createStatisticsByAuthor")
+    @DisplayName("test7 -> createStatisticsByAuthor method")
     void checkCorrectOutputStatisticsTest7() {
         Assertions.assertEquals(statisticsService.createStatisticsByAuthor(Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("admin", 3L, "user1", 6L, "user2", 10L));
     }
 
     @Test
-    @DisplayName("test8 -> createStatisticsByAuthor")
+    @DisplayName("test8 -> createStatisticsByAuthor method")
     void checkCorrectOutputStatisticsTest8() {
         Assertions.assertNotEquals(statisticsService.createStatisticsByAuthor(Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("admin", 4L, "user1", 2L, "user2", 0L));
     }
 
     @Test
-    @DisplayName("test9 -> createStatisticsByDatesBetween")
+    @DisplayName("test9 -> createStatisticsByDatesBetween method")
     void checkCorrectOutputStatisticsTest9() {
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(statisticsService.createStatisticsByDatesBetween(now, now.minusDays(6), Arrays.asList(Values.correctArticlesForStatistics)), Map.of(now, 2L,
@@ -111,7 +111,7 @@ public class UnitTestsStatisticsServiceMethods {
     }
 
     @Test
-    @DisplayName("test10 -> createStatisticsByDatesBetween")
+    @DisplayName("test10 -> createStatisticsByDatesBetween method")
     void checkCorrectOutputStatisticsTest10() {
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(statisticsService.createStatisticsByDatesBetween(now, now.minusDays(9), Arrays.asList(Values.correctArticlesForStatistics)),
