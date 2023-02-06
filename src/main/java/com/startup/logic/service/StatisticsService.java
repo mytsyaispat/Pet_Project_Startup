@@ -18,6 +18,7 @@ public interface StatisticsService {
     Map<String, Long> createStatisticsByAuthor(List<Article> articleList);
 
     ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate);
+    Map<LocalDate, Long> createStatisticsByDatesBetween(LocalDate firstDate, LocalDate secondDate, List<Article> articleList);
 
 
 }

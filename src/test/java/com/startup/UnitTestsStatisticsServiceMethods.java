@@ -1,26 +1,15 @@
 package com.startup;
 
-import com.startup.auth.repository.RoleRepository;
-import com.startup.auth.repository.UserRepository;
-import com.startup.auth.service.RoleService;
-import com.startup.auth.service.UserService;
-import com.startup.auth.service.impl.RoleServiceImpl;
-import com.startup.auth.service.impl.UserServiceImpl;
 import com.startup.logic.entity.Article;
 import com.startup.logic.entity.Category;
-import com.startup.logic.repository.ArticleRepository;
-import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
 import com.startup.logic.service.StatisticsService;
-import com.startup.logic.service.impl.ArticleServiceImpl;
-import com.startup.logic.service.impl.CategoryServiceImpl;
 import com.startup.logic.service.impl.StatisticsServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,22 +17,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class UnitTests {
+/**
+ * Проверка на правильность работы методов StatisticsService
+ */
 
-    ArticleRepository articleRepository = Mockito.mock(ArticleRepository.class);
-    CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
-    UserRepository userRepository = Mockito.mock(UserRepository.class);
-    PasswordEncoder passwordEncoder = Mockito.mock(PasswordEncoder.class);
-    RoleRepository roleRepository = Mockito.mock(RoleRepository.class);
-    CategoryService categoryService = new CategoryServiceImpl(categoryRepository);
-    RoleService roleService = new RoleServiceImpl(roleRepository);
-    UserService userService = new UserServiceImpl(passwordEncoder, userRepository, roleService);
-    ArticleService articleService = new ArticleServiceImpl(articleRepository, categoryService, userService);
+public class UnitTestsStatisticsServiceMethods {
+    ArticleService articleService = Mockito.mock(ArticleService.class);
+    CategoryService categoryService = Mockito.mock(CategoryService.class);
     StatisticsService statisticsService = new StatisticsServiceImpl(articleService, categoryService);
 
     @Test
-    @DisplayName("test16 checkStatisticsMethodForTheLastWeek1")
-    void checkStatisticsMethodForTheLastWeek1() {
+    @DisplayName("test1 -> createStatisticsForTheLastWeek")
+    void checkCorrectOutputStatisticsTest1() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticles));
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(statisticsService.createStatisticsForTheLastWeek(articleList), Map.of(now, 1L,
@@ -53,8 +38,8 @@ public class UnitTests {
     }
 
     @Test
-    @DisplayName("test17 checkStatisticsMethodForTheLastWeek2")
-    void checkStatisticsMethodForTheLastWeek2() {
+    @DisplayName("test2 -> createStatisticsForTheLastWeek")
+    void checkCorrectOutputStatisticsTest2() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticles));
         LocalDate now = LocalDate.now();
         Assertions.assertNotEquals(statisticsService.createStatisticsForTheLastWeek(articleList), Map.of(now, 4L,
@@ -64,8 +49,8 @@ public class UnitTests {
     }
 
     @Test
-    @DisplayName("test18 checkStatisticsMethodForTheLastWeek3")
-    void checkStatisticsMethodForTheLastWeek3() {
+    @DisplayName("test3 -> createStatisticsForTheLastWeek")
+    void checkCorrectOutputStatisticsTest3() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticlesForStatistics));
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(statisticsService.createStatisticsForTheLastWeek(articleList), Map.of(now, 2L,
@@ -75,8 +60,8 @@ public class UnitTests {
     }
 
     @Test
-    @DisplayName("test19 checkStatisticsMethodForTheLastWeek4")
-    void checkStatisticsMethodForTheLastWeek4() {
+    @DisplayName("test4 -> createStatisticsForTheLastWeek")
+    void checkCorrectOutputStatisticsTest4() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticlesForStatistics));
         LocalDate now = LocalDate.now();
         Assertions.assertNotEquals(statisticsService.createStatisticsForTheLastWeek(articleList), Map.of(now, 0L,
@@ -86,36 +71,56 @@ public class UnitTests {
     }
 
     @Test
-    @DisplayName("test20 checkStatisticsMethodByCategory1")
-    void checkStatisticsMethodByCategory1() {
+    @DisplayName("test5 -> createStatisticsByCategory")
+    void checkCorrectOutputStatisticsTest5() {
         List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArray));
         Assertions.assertEquals(statisticsService.createStatisticsByCategory(categoryList, Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("Category1", 6L, "Category2", 7L, "Category3", 5L, "Category4", 1L));
     }
 
     @Test
-    @DisplayName("test21 checkStatisticsMethodByCategory2")
-    void checkStatisticsMethodByCategory2() {
+    @DisplayName("test6 -> createStatisticsByCategory")
+    void checkCorrectOutputStatisticsTest6() {
         List<Category> categoryList = new ArrayList<>(Arrays.asList(Values.categoryArray));
         Assertions.assertNotEquals(statisticsService.createStatisticsByCategory(categoryList, Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("Category1", 2L, "Category2", 0L, "Category3", 9L, "Category4", 6L));
     }
 
     @Test
-    @DisplayName("test22 checkStatisticsMethodByAuthor1")
-    void checkStatisticsMethodByAuthor1() {
+    @DisplayName("test7 -> createStatisticsByAuthor")
+    void checkCorrectOutputStatisticsTest7() {
         Assertions.assertEquals(statisticsService.createStatisticsByAuthor(Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("admin", 3L, "user1", 6L, "user2", 10L));
     }
 
     @Test
-    @DisplayName("test23 checkStatisticsMethodByAuthor2")
-    void checkStatisticsMethodByAuthor2() {
-        List<Article> articleList = new ArrayList<>();
+    @DisplayName("test8 -> createStatisticsByAuthor")
+    void checkCorrectOutputStatisticsTest8() {
         Assertions.assertNotEquals(statisticsService.createStatisticsByAuthor(Arrays.asList(Values.correctArticlesForStatistics)),
                 Map.of("admin", 4L, "user1", 2L, "user2", 0L));
     }
 
+    @Test
+    @DisplayName("test9 -> createStatisticsByDatesBetween")
+    void checkCorrectOutputStatisticsTest9() {
+        LocalDate now = LocalDate.now();
+        Assertions.assertEquals(statisticsService.createStatisticsByDatesBetween(now, now.minusDays(6), Arrays.asList(Values.correctArticlesForStatistics)), Map.of(now, 2L,
+                now.minusDays(1), 5L, now.minusDays(2), 2L,
+                now.minusDays(3), 0L, now.minusDays(4), 4L,
+                now.minusDays(5), 2L, now.minusDays(6), 4L));
+    }
+
+    @Test
+    @DisplayName("test10 -> createStatisticsByDatesBetween")
+    void checkCorrectOutputStatisticsTest10() {
+        LocalDate now = LocalDate.now();
+        Assertions.assertEquals(statisticsService.createStatisticsByDatesBetween(now, now.minusDays(9), Arrays.asList(Values.correctArticlesForStatistics)),
+                Map.of(now, 2L, now.minusDays(1), 5L, now.minusDays(2), 2L,
+                        now.minusDays(3), 0L, now.minusDays(4), 4L,
+                        now.minusDays(5), 2L, now.minusDays(6), 4L,
+                        now.minusDays(7), 0L, now.minusDays(8), 0L,
+                        now.minusDays(9), 0L));
+    }
 
 
 }

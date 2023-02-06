@@ -95,17 +95,23 @@ public class StatisticsServiceImpl implements StatisticsService {
      * */
     @Override
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
+        List<Article> articleList = articleService.getArticleList();
+        Map<LocalDate, Long> body = createStatisticsByDatesBetween(firstDate, secondDate, articleList);
+        return ResponseEntity.ok(body);
+    }
+
+    @Override
+    public Map<LocalDate, Long> createStatisticsByDatesBetween(LocalDate firstDate, LocalDate secondDate, List<Article> articleList) {
         if (firstDate.isAfter(secondDate)) {
             LocalDate swap = firstDate;
             firstDate = secondDate;
             secondDate = swap;
         }
-        List<Article> articleList = articleService.getArticleList();
-        Map<LocalDate, Long> body = new HashMap<>();
+        Map<LocalDate, Long> result = new HashMap<>();
         for (; firstDate.isBefore(secondDate) || firstDate.isEqual(secondDate); firstDate = firstDate.plusDays(1)) {
-            body.put(firstDate, getCountOfArticle(articleList, firstDate));
+            result.put(firstDate, getCountOfArticle(articleList, firstDate));
         }
-        return ResponseEntity.ok(body);
+        return result;
     }
 
     private Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
