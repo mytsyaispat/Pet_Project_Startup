@@ -2,7 +2,6 @@ package com.startup.auth.service.impl;
 
 import com.startup.logic.entity.Roles;
 import com.startup.auth.entity.User;
-import com.startup.auth.entity.UserDetailsImpl;
 import com.startup.auth.repository.UserRepository;
 import com.startup.auth.service.RoleService;
 import com.startup.auth.service.UserService;
@@ -54,7 +53,7 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         if (optionalUser.isEmpty()) throw new UsernameNotFoundException("This username is not found!");
-        return new UserDetailsImpl(optionalUser.get());
+        return optionalUser.get();
     }
 
     @Override
