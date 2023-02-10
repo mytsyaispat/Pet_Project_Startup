@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -39,4 +41,13 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findById(id);
     }
 
+    @Override
+    public ResponseEntity<?> getRoles() {
+        return ResponseEntity.ok((Set<Role>) roleRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<?> getRole(Long id) {
+        return ResponseEntity.ok(roleRepository.findById(id));
+    }
 }

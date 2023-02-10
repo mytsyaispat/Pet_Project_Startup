@@ -1,5 +1,7 @@
 package com.startup.logic.service.impl;
 
+import com.startup.auth.repository.RoleRepository;
+import com.startup.logic.controller.entity.CategoryParent;
 import com.startup.logic.entity.Category;
 import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.CategoryService;
@@ -32,19 +34,38 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
-     * Метод создаёт категорию в базе данных если такой статьи ещё нет, в противном случае не создаёт
+     * Метод создаёт категорию в базе данных
      * */
     @Override
     @Transactional
     public ResponseEntity<String> createCategory(Category category) {
-        if (categoryRepository.findByName(category.getName()) == null) {
-            categoryRepository.save(category);
-            return ResponseEntity.ok("Category was successfully added!");
-        }
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "You are trying to add an existing category!");
+//        if (cat)
+//        categoryRepository.save(category);
+//        return ResponseEntity.ok("Category was successfully added!");
+        return null;
     }
 
     public Category findByName(String name) {
         return categoryRepository.findByName(name);
+    }
+
+    /**
+     * Метод создаёт потомка у категории либо выбрасывает ResponseStatusException если категория не прошла валидацию
+     */
+    @Override
+    public ResponseEntity<String> createCategoryParent(CategoryParent categoryParent) {
+//        String categoryName = categoryParent.getCategory();
+//        String parentName = categoryParent.getParent();
+//        List<Category> categoryList = categoryRepository.findAllByName(categoryName);
+//        if (categoryList.isEmpty())
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found!");
+//        if (categoryList.stream().anyMatch(category -> category.getParent().getName().equals(parentName)))
+//            throw new ResponseStatusException(HttpStatus.CONFLICT, "You are trying to add same parent!");
+//        if (categoryList.size() == 1) {
+//            Category category = categoryList.get(0);
+//            category.setParent();
+//            createCategory(category)
+//        }
+        return null;
     }
 }

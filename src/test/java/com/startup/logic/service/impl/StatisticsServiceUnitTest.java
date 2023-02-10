@@ -1,5 +1,6 @@
-package com.startup;
+package com.startup.logic.service.impl;
 
+import com.startup.Values;
 import com.startup.logic.entity.Article;
 import com.startup.logic.entity.Category;
 import com.startup.logic.service.ArticleService;
@@ -21,7 +22,7 @@ import java.util.Map;
  * Проверка на правильность работы методов StatisticsService
  */
 
-public class UnitTestsStatisticsServiceMethods {
+public class StatisticsServiceUnitTest {
     ArticleService articleService = Mockito.mock(ArticleService.class);
     CategoryService categoryService = Mockito.mock(CategoryService.class);
     StatisticsService statisticsService = new StatisticsServiceImpl(articleService, categoryService);
