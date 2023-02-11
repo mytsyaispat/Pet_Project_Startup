@@ -31,9 +31,6 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.mvcMatchers("/startup/admin/**").hasRole(Roles.ADMIN.name());
-                    auth.mvcMatchers("/startup/user").permitAll();
-                    auth.mvcMatchers("/startup/**").authenticated();
                     auth.mvcMatchers("/**").permitAll();
                 })
                 .httpBasic(Customizer.withDefaults())

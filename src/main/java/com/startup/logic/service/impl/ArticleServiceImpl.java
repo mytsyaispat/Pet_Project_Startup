@@ -16,6 +16,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -36,9 +37,10 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public ResponseEntity<?> createArticle(ArticleRequest articleRequest, String author) {
-        Category category = categoryService.findByName(articleRequest.getCategory());
-        if (category == null)
+        Optional<Category> oCategory = categoryService.findByName(articleRequest.getCategory());
+        if (oCategory.isEmpty())
             return new ResponseEntity<>("Category not found!", HttpStatus.BAD_REQUEST);
+        Category category = oCategory.get();
         User user = userService.getUserByUsername(author);
         Article article = new Article(articleRequest, category, user);
         articleRepository.save(article);

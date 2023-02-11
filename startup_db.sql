@@ -1,1 +1,0 @@
-CREATE DATABASE startup_db;

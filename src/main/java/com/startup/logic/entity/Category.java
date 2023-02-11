@@ -1,35 +1,36 @@
 package com.startup.logic.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "category")
-//@Table(name = "category",
-//        uniqueConstraints = @UniqueConstraint(name = "UniqueNameAndParentId", columnNames = {"name", "parent_id"})
-//)
+@Table(name = "category",
+        uniqueConstraints = @UniqueConstraint(name = "UniqueParentAndChild", columnNames = {"name", "parent_id"})
+)
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
+    @NotBlank(message = "Name field must not be empty!")
     private String name;
-//    @OneToMany(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "parent_id", referencedColumnName = "id")
-//    private Category parent = null;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
+    @JoinColumn(name = "parent_id")
+    private Category category = null;
 
     public Category(String name) {
         this.name = name;
     }
 
-    public Category(Long id, String name) {
-        this.id = id;
+    public Category(String name, Category category) {
         this.name = name;
+        this.category = category;
     }
 
     public Category() {}
@@ -47,17 +48,15 @@ public class Category {
         return name;
     }
 
-    @JsonProperty(value = "category")
     public void setName(String name) {
         this.name = name;
     }
 
-//    public Category getParent() {
-//        return parent;
-//    }
-//
-//    @JsonIgnore
-//    public void setParent(Category parent) {
-//        this.parent = parent;
-//    }
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

@@ -114,7 +114,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
-    private Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
+    public Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
         return articleList.stream()
                 .filter(article -> article.getDate().toLocalDate().isEqual(firstDate))
                 .count();
