@@ -5,14 +5,14 @@ import com.startup.logic.controller.entity.CategoryLink;
 import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.CategoryService;
 import org.postgresql.util.PSQLException;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -28,11 +28,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findAll();
     }
 
-    @Override
-    @Transactional
-    public void saveCategory(Category category) {
-        categoryRepository.save(category);
-    }
 
     /**
      * Метод создаёт категорию в базе данных
@@ -40,13 +35,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public ResponseEntity<String> createCategory(Category category) {
-        Optional<Category> oCategory = findByName(category.getName());
+        Optional<Category> oCategory = getCategoryByName(category.getName());
         if (oCategory.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This category already exists");
         categoryRepository.save(category);
         return ResponseEntity.ok("Category was successfully added!");
     }
 
-    public Optional<Category> findByName(String name) {
+    public Optional<Category> getCategoryByName(String name) {
         return categoryRepository.findByName(name);
     }
 
@@ -57,31 +52,46 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity<String> createCategoryChild(CategoryLink categoryLink) {
         if (categoryLink.getChildName().equals(categoryLink.getParentName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Категория не может наследоваться от самой себя!");
-        Optional<Category> optionalCategoryParent = findByName(categoryLink.getParentName());
-        if (optionalCategoryParent.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category parent is not found");
+        Optional<Category> optionalCategoryParent = getCategoryByName(categoryLink.getParentName());
+        if (optionalCategoryParent.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category parent is not found");
         Category categoryParent = optionalCategoryParent.get();
-        Optional<Category> optionalCategoryChild = findByName(categoryLink.getChildName());
-        if (optionalCategoryChild.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category child is not found");
+        Optional<Category> optionalCategoryChild = getCategoryByName(categoryLink.getChildName());
+        if (optionalCategoryChild.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category child is not found");
         Category categoryChild = optionalCategoryChild.get();
-        Optional<Category> categoryOptional = Optional.ofNullable(categoryChild.getCategory());
-        if (categoryOptional.isPresent()) {
-            if (categoryChild.getCategory().getName().equals(categoryParent.getName()))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такая связь уже есть!");
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Эта категория уже учавствует в иерархии");
-        }
-        Category categoryCurrent = categoryParent;
+        List<Category> categoryParentList = categoryParent.getCategoryList();
+        if (!categoryParentList.isEmpty())
+            for (Category category : categoryParentList)
+                if (category.getName().equals(categoryChild.getName()))
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такая связь уже есть!");
+        Optional<Long> isInherited = Optional.ofNullable(categoryRepository.getParentIdByCategory(categoryChild));
+        if (isInherited.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category child уже учавствует в иерархии");
+        Category currentCategory = categoryParent;
         while (true) {
-            categoryOptional = Optional.ofNullable(categoryCurrent.getCategory());
-            if (categoryOptional.isPresent()) {
-                categoryCurrent = categoryCurrent.getCategory();
-                if (categoryCurrent.getName().equals(categoryChild.getName()))
-                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Указанная категория child уже является parent в данной иерархии!");
+            Optional<Category> optionalParent = Optional.ofNullable(currentCategory.getCategory());
+            if (optionalParent.isPresent()) {
+                currentCategory = optionalParent.get();
             } else {
-                break;
+                if (currentCategory.getName().equals(categoryChild.getName()))
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Category child уже является parent в данной иерархии!");
+                else break;
             }
         }
         categoryChild.setCategory(categoryParent);
         categoryRepository.save(categoryChild);
         return ResponseEntity.ok("Link successfully create!");
+    }
+
+    @Override
+    public Optional<Category> getCategoryById(Long id) {
+        return categoryRepository.findById(id);
+    }
+
+    @Override
+    public List<Category> getCategoryListWhereParentIdIsNull() {
+        List<Category> result = categoryRepository.findAllWhereParentIdIsNull();
+        return null;
     }
 }

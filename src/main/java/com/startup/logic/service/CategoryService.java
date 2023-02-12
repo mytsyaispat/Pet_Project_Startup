@@ -10,9 +10,11 @@ import java.util.Optional;
 public interface CategoryService {
 
     List<Category> getCategoryList();
-    void saveCategory(Category category);
     ResponseEntity<String> createCategory(Category category);
-    Optional<Category> findByName(String name);
+    Optional<Category> getCategoryByName(String name);
     ResponseEntity<String> createCategoryChild(CategoryLink categoryLink);
 
+    Optional<Category> getCategoryById(Long id);
+
+    List<Category> getCategoryListWhereParentIdIsNull();
 }

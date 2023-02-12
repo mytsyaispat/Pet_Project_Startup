@@ -37,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional
     public ResponseEntity<?> createArticle(ArticleRequest articleRequest, String author) {
-        Optional<Category> oCategory = categoryService.findByName(articleRequest.getCategory());
+        Optional<Category> oCategory = categoryService.getCategoryByName(articleRequest.getCategory());
         if (oCategory.isEmpty())
             return new ResponseEntity<>("Category not found!", HttpStatus.BAD_REQUEST);
         Category category = oCategory.get();
