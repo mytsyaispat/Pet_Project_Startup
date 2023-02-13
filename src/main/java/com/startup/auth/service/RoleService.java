@@ -5,16 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface RoleService {
 
-    ResponseEntity<?> createRole(Role role);
+    ResponseEntity<String> createRole(Role role);
 
-    Optional<Role> findRole(String role);
-    Optional<Role> findById(Long id);
+    Optional<Role> getRoleByName(String name);
 
-    ResponseEntity<?> getRoles();
+    Set<Role> getRoles();
 
-    ResponseEntity<?> getRole(Long id);
+    Optional<Role> getRoleById(Long id);
 
 }

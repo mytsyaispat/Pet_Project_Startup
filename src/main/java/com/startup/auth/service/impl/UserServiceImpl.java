@@ -1,5 +1,6 @@
 package com.startup.auth.service.impl;
 
+import com.startup.auth.entity.Role;
 import com.startup.logic.entity.Roles;
 import com.startup.auth.entity.User;
 import com.startup.auth.repository.UserRepository;
@@ -37,27 +38,23 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Set.of(roleService.findRole(Roles.USER.name()).get()));
+        Optional<Role> roleOptional = roleService.getRoleByName(Roles.USER.name());
+        if (roleOptional.isEmpty())
+            throw new RuntimeException("Роль User отсутствует в базе данных");
+        user.setRoles(Set.of(roleOptional.get()));
         userRepository.save(user);
         return ResponseEntity.ok("User successfully registered!");
     }
 
-
-
-    @Override
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).get();
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isEmpty()) throw new UsernameNotFoundException("This username is not found!");
+        Optional<User> optionalUser = findUserByUsername(username);
+        if (optionalUser.isEmpty()) throw new UsernameNotFoundException("This user is not found!");
         return optionalUser.get();
     }
 
     @Override
-    public Optional<User> findAdmin() {
-        return userRepository.findByUsername("admin");
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 }

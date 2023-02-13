@@ -24,7 +24,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> createRole(Role role) {
+    public ResponseEntity<String> createRole(Role role) {
         Optional<Role> roleOptional = roleRepository.findByName(role.getName());
         if (roleOptional.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This role has already been created!");
         roleRepository.save(role);
@@ -32,22 +32,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Optional<Role> findRole(String role) {
-        return roleRepository.findByName(role);
+    public Optional<Role> getRoleByName(String name) {
+        return roleRepository.findByName(name);
     }
 
     @Override
-    public Optional<Role> findById(Long id) {
+    public Set<Role> getRoles() {
+        return roleRepository.findAll();
+    }
+
+    @Override
+    public Optional<Role> getRoleById(Long id) {
         return roleRepository.findById(id);
-    }
-
-    @Override
-    public ResponseEntity<?> getRoles() {
-        return ResponseEntity.ok((Set<Role>) roleRepository.findAll());
-    }
-
-    @Override
-    public ResponseEntity<?> getRole(Long id) {
-        return ResponseEntity.ok(roleRepository.findById(id));
     }
 }

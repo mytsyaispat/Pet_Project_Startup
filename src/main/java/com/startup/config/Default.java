@@ -32,17 +32,18 @@ public class Default {
 
     @Transactional
     private void createDefaultRolesIfNotCreated() {
-        if (roleService.findRole("ADMIN").isEmpty()) {
+        if (roleService.getRoleByName("ADMIN").isEmpty()) {
             roleService.createRole(new Role(Roles.ADMIN.name()));
             roleService.createRole(new Role(Roles.USER.name()));
         }
-        Optional<Role> optional = roleService.findRole(Roles.ADMIN.name());
-        optional.ifPresent(role -> System.out.println(role.getName()));
     }
     @Transactional
     private void createAdminIfNotCreated() {
-        if (userService.findAdmin().isEmpty()) {
-            userService.register(new User("admin", "admin", Set.of(roleService.findRole(Roles.ADMIN.name()).get())));
+        if (userService.findUserByUsername("admin").isEmpty()) {
+            Optional<Role> roleOptional = roleService.getRoleByName(Roles.ADMIN.name());
+            if (roleOptional.isEmpty())
+                throw new RuntimeException("Роли Admin нет в базе данных");
+            userService.register(new User("admin", "admin", Set.of(roleOptional.get())));
         }
     }
 
