@@ -17,7 +17,8 @@ public class CategoryLink {
         this.childName = childName;
     }
 
-    public CategoryLink() {}
+    public CategoryLink() {
+    }
 
     public String getParentName() {
         return parentName;

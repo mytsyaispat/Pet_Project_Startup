@@ -1,7 +1,6 @@
 package com.startup.logic.controller;
 
 import com.startup.logic.controller.entity.DateRequest;
-
 import com.startup.logic.service.StatisticsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,21 +23,21 @@ public class StatisticsController {
 
     @GetMapping("date/week")
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
-        return statisticsService.getStatisticsForTheLastWeek();
+        return ResponseEntity.ok(statisticsService.getStatisticsForTheLastWeek());
     }
 
     @GetMapping("category")
     public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
-        return statisticsService.getStatisticsByCategory();
+        return ResponseEntity.ok(statisticsService.getStatisticsByCategory());
     }
 
     @GetMapping("author")
     public ResponseEntity<Map<String, Long>> getStatisticsByAuthor() {
-        return statisticsService.getStatisticsByAuthor();
+        return ResponseEntity.ok(statisticsService.getStatisticsByAuthor());
     }
 
     @GetMapping("date/between")
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(@RequestBody DateRequest dateRequest) {
-        return statisticsService.getStatisticsBetweenDate(dateRequest.getFirstDate(), dateRequest.getSecondDate());
+        return ResponseEntity.ok(statisticsService.getStatisticsBetweenDate(dateRequest.getFirstDate(), dateRequest.getSecondDate()));
     }
 }

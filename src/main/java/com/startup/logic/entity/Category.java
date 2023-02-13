@@ -1,12 +1,11 @@
 package com.startup.logic.entity;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,11 +29,11 @@ public class Category {
     @NotBlank(message = "Name field must not be empty!")
     private String name;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "parent_id")
     private List<Category> categoryList = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "parent_id")
     private Category category = null;
 
@@ -55,7 +54,8 @@ public class Category {
         this.category = category;
     }
 
-    public Category() {}
+    public Category() {
+    }
 
     public Long getId() {
         return id;

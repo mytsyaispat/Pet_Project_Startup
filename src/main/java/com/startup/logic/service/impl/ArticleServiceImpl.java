@@ -1,16 +1,17 @@
 package com.startup.logic.service.impl;
 
+import com.startup.auth.entity.User;
+import com.startup.auth.service.UserService;
 import com.startup.logic.controller.entity.ArticleRequest;
 import com.startup.logic.entity.Article;
 import com.startup.logic.entity.Category;
 import com.startup.logic.repository.ArticleRepository;
 import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
-import com.startup.auth.entity.User;
-import com.startup.auth.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -33,14 +34,16 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * Метод создает статью и добавляет в базу данных в случае, если указанная категория существует.
-     * */
+     */
     @Override
     @Transactional
-    public ResponseEntity<?> createArticle(ArticleRequest articleRequest, String author) {
+    public ResponseEntity<String> createArticle(ArticleRequest articleRequest, String author) {
         Optional<Category> oCategory = categoryService.getCategoryByName(articleRequest.getCategory());
         if (oCategory.isEmpty())
             return new ResponseEntity<>("Category not found!", HttpStatus.BAD_REQUEST);
         Category category = oCategory.get();
+        if (!category.getCategoryList().isEmpty())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Данную категорию нельзя использовать, тк у неё есть наследники!");
         User user = userService.getUserByUsername(author);
         Article article = new Article(articleRequest, category, user);
         articleRepository.save(article);
@@ -49,7 +52,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     /**
      * Метод возврящает статьи за последнюю неделю
-     * */
+     */
     @Override
     public List<Article> findArticlesForTheLastSevenDays() {
         LocalDateTime now = LocalDateTime.now();
@@ -58,25 +61,18 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
-     * Метод возврящает все статьи или пустой лист, если их нет как ответ
-     * */
-    @Override
-    public ResponseEntity<List<Article>> responseArticleList() {
-        List<Article> articleList = articleRepository.findAll();
-        if (articleList.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        return ResponseEntity.ok(articleList);
-    }
-
-    /**
      * Метод возврящает все статьи
-     * */
+     */
     @Override
     public List<Article> getArticleList() {
         return articleRepository.findAll();
     }
 
+    /**
+     * Метод возврящает статью по id
+     */
     @Override
-    public List<Article> getArticleListByCategory(Long categoryId) {
-        return articleRepository.findAllByCategoryId(categoryId);
+    public Optional<Article> getArticleById(Long id) {
+        return articleRepository.findById(id);
     }
 }

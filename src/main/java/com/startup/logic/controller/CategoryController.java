@@ -1,7 +1,7 @@
 package com.startup.logic.controller;
 
-import com.startup.logic.entity.Category;
 import com.startup.logic.controller.entity.CategoryLink;
+import com.startup.logic.entity.Category;
 import com.startup.logic.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

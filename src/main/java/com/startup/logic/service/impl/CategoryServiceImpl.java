@@ -1,7 +1,7 @@
 package com.startup.logic.service.impl;
 
-import com.startup.logic.entity.Category;
 import com.startup.logic.controller.entity.CategoryLink;
+import com.startup.logic.entity.Category;
 import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -29,16 +30,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     /**
      * Метод создаёт категорию в базе данных
-     * */
+     */
     @Override
     @Transactional
     public ResponseEntity<String> createCategory(Category category) {
         Optional<Category> oCategory = getCategoryByName(category.getName());
-        if (oCategory.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This category already exists");
+        if (oCategory.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This category already exists");
         categoryRepository.save(category);
         return ResponseEntity.ok("Category was successfully added!");
     }
 
+    /**
+     * Метод возвращает категорию по имени
+     */
     public Optional<Category> getCategoryByName(String name) {
         return categoryRepository.findByName(name);
     }
@@ -82,11 +87,17 @@ public class CategoryServiceImpl implements CategoryService {
         return ResponseEntity.ok("Link successfully create!");
     }
 
+    /**
+     * Метод возвращает категорию по id
+     */
     @Override
     public Optional<Category> getCategoryById(Long id) {
         return categoryRepository.findById(id);
     }
 
+    /**
+     * Метод возвращает лист категорий у которых нет родителя
+     */
     @Override
     public List<Category> getCategoryListWhereParentIdIsNull() {
         return categoryRepository.findAllWhereParentIdIsNull();

@@ -1,4 +1,5 @@
 package com.startup.logic.repository;
+
 import com.startup.logic.entity.Category;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -14,6 +15,6 @@ public interface CategoryRepository extends CrudRepository<Category, Long> {
     List<Category> findAll();
 
     @Query(nativeQuery = true,
-           value = "SELECT * FROM category WHERE parent_id IS NULL")
+            value = "SELECT * FROM category WHERE parent_id IS NULL")
     List<Category> findAllWhereParentIdIsNull();
 }

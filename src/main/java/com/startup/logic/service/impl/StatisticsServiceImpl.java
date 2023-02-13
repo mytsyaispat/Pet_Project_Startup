@@ -5,7 +5,6 @@ import com.startup.logic.entity.Category;
 import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
 import com.startup.logic.service.StatisticsService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,17 +29,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Дата -> Количество созданных статей за дату.
      * Статистика собирается за последнюю неделю
-    * */
+     */
     @Override
-    public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
+    public Map<LocalDate, Long> getStatisticsForTheLastWeek() {
         List<Article> articleList = articleService.findArticlesForTheLastSevenDays();
-        if (articleList.isEmpty()) return ResponseEntity.ok(Collections.emptyMap());
-        Map<LocalDate, Long> statistics = createStatisticsForTheLastWeek(articleList);
-        return ResponseEntity.ok(statistics);
+        if (articleList.isEmpty()) return Collections.emptyMap();
+        Map<LocalDate, Long> result = createStatisticsForTheLastWeek(articleList);
+        return result;
     }
 
-    @Override
-    public Map<LocalDate, Long> createStatisticsForTheLastWeek(List<Article> articleList) {
+    private Map<LocalDate, Long> createStatisticsForTheLastWeek(List<Article> articleList) {
         return Stream.iterate(0, i -> i + 1)
                 .limit(7)
                 .collect(Collectors.toMap(i -> LocalDate.now().minusDays(i),
@@ -52,18 +50,17 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Категория -> Количество созданных статей по категории.
      * Статистика собирается за всё время
-     * */
+     */
     @Override
-    public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
+    public Map<String, Long> getStatisticsByCategory() {
         List<Category> categoryList = categoryService.getCategoryList();
         List<Article> articleList = articleService.getArticleList();
-        if (categoryList.isEmpty()) return ResponseEntity.ok(Collections.emptyMap());
-        Map<String, Long> statistics = createStatisticsByCategory(categoryList, articleList);
-        return ResponseEntity.ok(statistics);
+        if (categoryList.isEmpty()) return Collections.emptyMap();
+        Map<String, Long> result = createStatisticsByCategory(categoryList, articleList);
+        return result;
     }
 
-    @Override
-    public Map<String, Long> createStatisticsByCategory(List<Category> categoryList, List<Article> articleList) {
+    private Map<String, Long> createStatisticsByCategory(List<Category> categoryList, List<Article> articleList) {
         return categoryList.stream()
                 .collect(Collectors.toMap(Category::getName,
                         category -> articleList.stream()
@@ -74,17 +71,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Автор -> Количество созданных статей автором.
      * Статистика собирается за всё время
-     * */
+     */
     @Override
-    public ResponseEntity<Map<String, Long>> getStatisticsByAuthor() {
+    public Map<String, Long> getStatisticsByAuthor() {
         List<Article> articleList = articleService.getArticleList();
-        if (articleList.isEmpty()) return ResponseEntity.ok(Collections.emptyMap());
-        Map<String, Long> statistics = createStatisticsByAuthor(articleList);
-        return ResponseEntity.ok(statistics);
+        if (articleList.isEmpty()) return Collections.emptyMap();
+        Map<String, Long> result = createStatisticsByAuthor(articleList);
+        return result;
     }
 
-    @Override
-    public Map<String, Long> createStatisticsByAuthor(List<Article> articleList) {
+    private Map<String, Long> createStatisticsByAuthor(List<Article> articleList) {
         return articleList.stream()
                 .collect(Collectors.groupingBy(article -> article.getUser().getUsername(), Collectors.counting()));
     }
@@ -92,16 +88,16 @@ public class StatisticsServiceImpl implements StatisticsService {
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Дата -> Количество созданных статей за дату.
      * Статистика собирается в промежутке переданных дат (включительно) в параметрах метода
-     * */
+     */
     @Override
-    public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
+    public Map<LocalDate, Long> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
         List<Article> articleList = articleService.getArticleList();
-        Map<LocalDate, Long> body = createStatisticsByDatesBetween(firstDate, secondDate, articleList);
-        return ResponseEntity.ok(body);
+        Map<LocalDate, Long> result = createStatisticsByDatesBetween(firstDate, secondDate, articleList);
+        return result;
     }
 
-    @Override
-    public Map<LocalDate, Long> createStatisticsByDatesBetween(LocalDate firstDate, LocalDate secondDate, List<Article> articleList) {
+
+    private Map<LocalDate, Long> createStatisticsByDatesBetween(LocalDate firstDate, LocalDate secondDate, List<Article> articleList) {
         if (firstDate.isAfter(secondDate)) {
             LocalDate swap = firstDate;
             firstDate = secondDate;
@@ -114,7 +110,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         return result;
     }
 
-    public Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
+    private Long getCountOfArticle(List<Article> articleList, LocalDate firstDate) {
         return articleList.stream()
                 .filter(article -> article.getDate().toLocalDate().isEqual(firstDate))
                 .count();

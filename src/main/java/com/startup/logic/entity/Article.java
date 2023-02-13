@@ -2,8 +2,8 @@ package com.startup.logic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.startup.logic.controller.entity.ArticleRequest;
 import com.startup.auth.entity.User;
+import com.startup.logic.controller.entity.ArticleRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -41,7 +41,8 @@ public class Article {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Article() {}
+    public Article() {
+    }
 
     public Article(String title, String content, LocalDateTime date, Category category, User user) {
         this.title = title;

@@ -3,13 +3,11 @@ package com.startup.logic.service.impl;
 import com.startup.Values;
 import com.startup.logic.entity.Article;
 import com.startup.logic.entity.Category;
-import com.startup.logic.service.ArticleService;
-import com.startup.logic.service.CategoryService;
 import com.startup.logic.service.StatisticsService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,17 +19,19 @@ import java.util.Map;
  * Проверка на правильность работы методов StatisticsService
  */
 
-public class StatisticsServiceUnitTest {
-    ArticleService articleService = Mockito.mock(ArticleService.class);
-    CategoryService categoryService = Mockito.mock(CategoryService.class);
-    StatisticsService statisticsService = new StatisticsServiceImpl(articleService, categoryService);
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class StatisticsServiceIntegrationTest {
+    @Autowired
+    StatisticsService statisticsService;
 
     @Test
     @DisplayName("test1 -> createStatisticsForTheLastWeek method")
     void checkCorrectOutputStatisticsTest1() {
         List<Article> articleList = new ArrayList<>(Arrays.asList(Values.correctArticles));
         LocalDate now = LocalDate.now();
-        Assertions.assertEquals(statisticsService.createStatisticsForTheLastWeek(articleList), Map.of(now, 1L,
+        Assertions.assertEquals(statisticsService.getStatisticsForTheLastWeek(articleList), Map.of(now, 1L,
                 now.minusDays(1), 0L, now.minusDays(2), 1L,
                 now.minusDays(3), 1L, now.minusDays(4), 0L,
                 now.minusDays(5), 0L, now.minusDays(6), 0L));

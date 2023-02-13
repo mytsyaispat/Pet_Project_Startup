@@ -19,7 +19,8 @@ public class ArticleRequest {
         this.category = category;
     }
 
-    public ArticleRequest() {}
+    public ArticleRequest() {
+    }
 
     public String getTitle() {
         return title;

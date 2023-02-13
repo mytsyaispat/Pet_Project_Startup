@@ -5,16 +5,16 @@ import com.startup.logic.entity.Article;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ArticleService {
 
-    ResponseEntity<?> createArticle(ArticleRequest article, String author);
+    ResponseEntity<String> createArticle(ArticleRequest article, String author);
 
     List<Article> findArticlesForTheLastSevenDays();
-    ResponseEntity<List<Article>> responseArticleList();
+
     List<Article> getArticleList();
 
-    List<Article> getArticleListByCategory(Long categoryId);
-
+    Optional<Article> getArticleById(Long id);
 }
