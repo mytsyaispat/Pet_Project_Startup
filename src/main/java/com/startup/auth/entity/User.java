@@ -1,6 +1,7 @@
 package com.startup.auth.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,11 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public User(String username, String password, Set<Role> roleList) {
         this.username = username.toLowerCase();
         this.password = password;
@@ -46,6 +52,7 @@ public class User implements UserDetails {
         return id;
     }
 
+    @JsonIgnore
     public void setId(Long id) {
         this.id = id;
     }
@@ -92,6 +99,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+    @JsonIgnore
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }

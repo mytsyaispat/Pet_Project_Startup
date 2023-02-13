@@ -2,7 +2,6 @@ package com.startup.auth.service;
 
 import com.startup.auth.entity.Role;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 import java.util.Set;

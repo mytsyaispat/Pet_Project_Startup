@@ -43,7 +43,7 @@ public class Default {
             Optional<Role> roleOptional = roleService.getRoleByName(Roles.ADMIN.name());
             if (roleOptional.isEmpty())
                 throw new RuntimeException("Роли Admin нет в базе данных");
-            userService.register(new User("admin", "admin", Set.of(roleOptional.get())));
+            userService.createUser(new User("admin", "admin", Set.of(roleOptional.get())));
         }
     }
 

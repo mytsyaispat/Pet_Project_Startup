@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> register(User user) {
+    public ResponseEntity<String> createUser(User user) {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
         if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));

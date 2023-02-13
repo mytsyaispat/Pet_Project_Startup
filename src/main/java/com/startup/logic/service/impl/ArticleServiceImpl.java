@@ -10,6 +10,7 @@ import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,7 +45,7 @@ public class ArticleServiceImpl implements ArticleService {
         Category category = oCategory.get();
         if (!category.getCategoryList().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Данную категорию нельзя использовать, тк у неё есть наследники!");
-        User user = userService.getUserByUsername(author);
+        User user = (User) userService.loadUserByUsername(author);
         Article article = new Article(articleRequest, category, user);
         articleRepository.save(article);
         return ResponseEntity.ok("Article successfully added!");

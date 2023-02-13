@@ -1,6 +1,5 @@
 package com.startup.config;
 
-import com.startup.logic.entity.Roles;
 import com.startup.auth.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

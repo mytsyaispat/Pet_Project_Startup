@@ -1,5 +1,9 @@
 package com.startup;
 
+import com.startup.auth.entity.Role;
+import com.startup.auth.entity.User;
+import com.startup.auth.service.RoleService;
+import com.startup.auth.service.UserService;
 import com.startup.logic.controller.entity.ArticleRequest;
 import com.startup.logic.controller.entity.CategoryLink;
 import com.startup.logic.entity.Article;
@@ -18,7 +22,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -30,9 +38,11 @@ class IntegrationTest {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private ArticleService userService;
+    private UserService userService;
     @Autowired
-    StatisticsService statisticsService;
+    private StatisticsService statisticsService;
+    @Autowired
+    private RoleService roleService;
 
     @Test
     @Order(5)
@@ -163,7 +173,7 @@ class IntegrationTest {
     @DisplayName(value = "-> Попытка добавить статью с несуществующей категорией")
     void createArticleShouldThrowException1() {
         Assertions.assertThrows(ResponseStatusException.class,
-                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Несуществующая категория про машину"), "Admin"));
+                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Несуществующая категория про машину"), "admin"));
     }
 
     @Test
@@ -171,7 +181,25 @@ class IntegrationTest {
     @DisplayName(value = "-> Попытка добавить статью с категорией у которой есть потомки")
     void createArticleShouldThrowException2() {
         Assertions.assertThrows(ResponseStatusException.class,
-                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Машины"), "Admin"));
+                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Машины"), "admin"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"user1", "user2"})
+    @Order(57)
+    @DisplayName(value = "-> Добавление новых пользователей")
+    void createUser(String username) {
+        Assertions.assertEquals(ResponseEntity.ok("User successfully registered!"),
+                userService.createUser(new User(username, username)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"user1", "user2"})
+    @Order(58)
+    @DisplayName(value = "-> Попытка создать существующих пользователей")
+    void createUserShouldThrowException(String username) {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> userService.createUser(new User(username, username)));
     }
 
     @Test
@@ -186,12 +214,12 @@ class IntegrationTest {
     void addSomeArticles() {
         articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
         articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №3"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
-        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "user1");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "user1");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "user1");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №3"), "user1");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "user2");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "user2");
     }
 
     @Test
@@ -226,9 +254,9 @@ class IntegrationTest {
     void getStatisticsForTheLastWeek() {
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(Map.of(now, 9L,
-                now.minusDays(1), 0L, now.minusDays(2), 0L,
-                now.minusDays(3), 0L, now.minusDays(4), 0L,
-                now.minusDays(5), 0L, now.minusDays(6), 0L),
+                        now.minusDays(1), 0L, now.minusDays(2), 0L,
+                        now.minusDays(3), 0L, now.minusDays(4), 0L,
+                        now.minusDays(5), 0L, now.minusDays(6), 0L),
                 statisticsService.getStatisticsForTheLastWeek());
     }
 
@@ -246,7 +274,7 @@ class IntegrationTest {
     @Order(75)
     @DisplayName("getStatisticsByAuthor -> Проверка метода на работоспособность")
     void getStatisticsByAuthor() {
-        Assertions.assertEquals(Map.of("admin", 9L),
+        Assertions.assertEquals(Map.of("admin", 3L, "user1", 4L, "user2", 2L),
                 statisticsService.getStatisticsByAuthor());
     }
 
@@ -257,6 +285,37 @@ class IntegrationTest {
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(Map.of(now, 9L, now.minusDays(1), 0L, now.minusDays(2), 0L),
                 statisticsService.getStatisticsBetweenDate(now, now.minusDays(2)));
+    }
+
+    @Test
+    @Order(80)
+    @DisplayName("-> Создание роли")
+    void createRole() {
+        Assertions.assertEquals(ResponseEntity.ok("Role successfully created!"),
+                roleService.createRole(new Role("ACCOUNTANT")));
+    }
+
+    @Test
+    @Order(85)
+    @DisplayName("-> Попытка создать существующую роль")
+    void createRoleShouldThrowException() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> roleService.createRole(new Role("ACCOUNTANT")));
+    }
+
+    @Test
+    @Order(85)
+    @DisplayName("-> Получаем роль которую только что создали по имени")
+    void getRoleByName() {
+        Assertions.assertTrue(roleService.getRoleByName("ACCOUNTANT").isPresent());
+    }
+
+    @Test
+    @Order(85)
+    @DisplayName("-> Получаем сет всех ролей")
+    void getRoles() {
+        Assertions.assertEquals(Set.of("ADMIN", "USER", "ACCOUNTANT"),
+                roleService.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
     }
 
 }
