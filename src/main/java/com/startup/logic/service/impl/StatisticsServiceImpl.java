@@ -34,8 +34,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public Map<LocalDate, Long> getStatisticsForTheLastWeek() {
         List<Article> articleList = articleService.findArticlesForTheLastSevenDays();
         if (articleList.isEmpty()) return Collections.emptyMap();
-        Map<LocalDate, Long> result = createStatisticsForTheLastWeek(articleList);
-        return result;
+        return createStatisticsForTheLastWeek(articleList);
     }
 
     private Map<LocalDate, Long> createStatisticsForTheLastWeek(List<Article> articleList) {
@@ -49,19 +48,19 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Категория -> Количество созданных статей по категории.
-     * Статистика собирается за всё время
+     * Статистика собирается за всё время со статей у которых нет потомков.
      */
     @Override
     public Map<String, Long> getStatisticsByCategory() {
         List<Category> categoryList = categoryService.getCategoryList();
         List<Article> articleList = articleService.getArticleList();
         if (categoryList.isEmpty()) return Collections.emptyMap();
-        Map<String, Long> result = createStatisticsByCategory(categoryList, articleList);
-        return result;
+        return createStatisticsByCategory(categoryList, articleList);
     }
 
     private Map<String, Long> createStatisticsByCategory(List<Category> categoryList, List<Article> articleList) {
         return categoryList.stream()
+                .filter(category -> category.getCategoryList().isEmpty())
                 .collect(Collectors.toMap(Category::getName,
                         category -> articleList.stream()
                                 .filter(article -> article.getCategory().getName().equals(category.getName()))
@@ -70,14 +69,13 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     /**
      * Метод возвращает мапу в которой хранится статистика в виде Автор -> Количество созданных статей автором.
-     * Статистика собирается за всё время
+     * Статистика собирается за всё время.
      */
     @Override
     public Map<String, Long> getStatisticsByAuthor() {
         List<Article> articleList = articleService.getArticleList();
         if (articleList.isEmpty()) return Collections.emptyMap();
-        Map<String, Long> result = createStatisticsByAuthor(articleList);
-        return result;
+        return createStatisticsByAuthor(articleList);
     }
 
     private Map<String, Long> createStatisticsByAuthor(List<Article> articleList) {
@@ -92,8 +90,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Override
     public Map<LocalDate, Long> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
         List<Article> articleList = articleService.getArticleList();
-        Map<LocalDate, Long> result = createStatisticsByDatesBetween(firstDate, secondDate, articleList);
-        return result;
+        return createStatisticsByDatesBetween(firstDate, secondDate, articleList);
     }
 
 

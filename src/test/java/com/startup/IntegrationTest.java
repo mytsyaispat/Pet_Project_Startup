@@ -1,95 +1,262 @@
-//package com.startup;
-//
-//import com.startup.auth.entity.User;
-//import com.startup.auth.repository.UserRepository;
-//import com.startup.auth.service.UserService;
-//import com.startup.logic.controller.entity.ArticleRequest;
-//import com.startup.logic.entity.Category;
-//import com.startup.logic.repository.ArticleRepository;
-//import com.startup.logic.repository.CategoryRepository;
-//import com.startup.logic.service.ArticleService;
-//import com.startup.logic.service.CategoryService;
-//import com.startup.logic.service.StatisticsService;
-//import org.hibernate.TransactionException;
-//import org.junit.jupiter.api.*;
-//import org.junit.jupiter.params.ParameterizedTest;
-//import org.junit.jupiter.params.provider.ValueSource;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.TestPropertySource;
-//import org.springframework.transaction.TransactionSystemException;
-//import org.springframework.web.server.ResponseStatusException;
-//
-//@SpringBootTest
-//@TestPropertySource(locations = "classpath:application-test.properties")
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//class IntegrationTest {
-//    @Autowired
-//    private ArticleRepository articleRepository;
-//    @Autowired
-//    private CategoryRepository categoryRepository;
-//    @Autowired
-//    private UserRepository userRepository;
-//    @Autowired
-//    private CategoryService categoryService;
-//    @Autowired
-//    private ArticleService articleService;
-//    @Autowired
-//    private StatisticsService statisticsService;
-//    @Autowired
-//    private UserService userService;
-//
-//    private final String category = "Category1";
-//
-//    @Test
-//    @Order(10)
-//    @DisplayName(value = "test1 -> createArticle method from ArticleService")
-//    void tryToCreateArticleWithoutCategoryInDBTest() {
-//        articleService.createArticle(new ArticleRequest("title", "content", category), "admin");
-//        Assertions.assertTrue(articleService.getArticleList().isEmpty());
-//    }
-//
-//    @Test
-//    @Order(20)
-//    @DisplayName(value = "test2 -> createCategory method from CategoryService")
-//    void addCategoryTest() {
-//        categoryService.createCategory(new Category(category));
-//        Assertions.assertNotNull(categoryRepository.findByName(category));
-//    }
-//
-//    @Test
-//    @Order(30)
-//    @DisplayName(value = "test3 -> createArticle method from ArticleService")
-//    void addArticleTest() {
-//        articleService.createArticle(new ArticleRequest("title", "content", category), "admin");
-//        Assertions.assertFalse(articleService.getArticleList().isEmpty());
-//    }
-//
-//    @Test
-//    @Order(40)
-//    @DisplayName(value = "test4 -> createCategory method from CategoryService")
-//    void tryToAddSameCategoryTest() {
-//        Assertions.assertThrows(ResponseStatusException.class,
-//                () -> categoryService.createCategory(new Category(category)));
-//    }
-//
-//    @Test
-//    @Order(50)
-//    @DisplayName(value = "test5 -> register method from UserService")
-//    void tryToRegisterUserWithCorrectDataTest() {
-//        userService.register(Values.userArray[1]);
-//        User user = userService.getUserByUsername("user1");
-//        Assertions.assertNotNull(user);
-//    }
-//
-//    @ParameterizedTest
-//    @ValueSource(ints = {0, 1, 2})
-//    @Order(60)
-//    @DisplayName(value = "test6-8 -> createArticle method from ArticleService")
-//    void tryToAddIncorrectArticles(int counter) {
-//        Assertions.assertThrows(TransactionSystemException.class, () -> {
-//            articleService.createArticle(Values.incorrectArticlesForCreate[counter], "user1");
-//        });
-//    }
-//
-//}
+package com.startup;
+
+import com.startup.logic.controller.entity.ArticleRequest;
+import com.startup.logic.controller.entity.CategoryLink;
+import com.startup.logic.entity.Article;
+import com.startup.logic.entity.Category;
+import com.startup.logic.service.ArticleService;
+import com.startup.logic.service.CategoryService;
+import com.startup.logic.service.StatisticsService;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
+import java.util.*;
+
+@SpringBootTest
+@TestPropertySource(locations = "classpath:application-test.properties")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class IntegrationTest {
+
+    @Autowired
+    private CategoryService categoryService;
+    @Autowired
+    private ArticleService articleService;
+    @Autowired
+    private ArticleService userService;
+    @Autowired
+    StatisticsService statisticsService;
+
+    @Test
+    @Order(5)
+    @DisplayName(value = "-> Создание нескольких категорий и проверка на добавление в базу")
+    void createCategory1() {
+        categoryService.createCategory(new Category("Машины"));
+        categoryService.createCategory(new Category("Внедорожники"));
+        categoryService.createCategory(new Category("Легковые машины"));
+        List<Category> categoryList = categoryService.getCategoryList();
+        Assertions.assertEquals(3, categoryList.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Машины", "Внедорожники", "Легковые машины"})
+    @Order(10)
+    @DisplayName(value = "-> Проверка добавленных категорий, выборка по имени")
+    void getCategoryByName(String categoryName) {
+        Optional<Category> categoryOptional = categoryService.getCategoryByName(categoryName);
+        Assertions.assertTrue(categoryOptional.isPresent());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Машины", "Внедорожники", "Легковые машины"})
+    @Order(13)
+    @DisplayName(value = "-> Попытка добавить существующую категорию")
+    void createCategoryShouldThrowException(String categoryName) {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategory(new Category(categoryName)));
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName(value = "-> Попытка наследования от самой себя")
+    void createCategoryLinkShouldThrowException1() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink("Машины", "Машины")));
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName(value = "-> Указание несуществующей parent категории")
+    void createCategoryLinkShouldThrowException2() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink("Чебупель", "Легковые машины")));
+    }
+
+    @Test
+    @Order(25)
+    @DisplayName(value = "-> Указание несуществующей child категории")
+    void createCategoryLinkShouldThrowException3() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink("Машины", "Фрикадельки")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Машины,Легковые машины", "Машины,Внедорожники"})
+    @Order(30)
+    @DisplayName(value = "-> Корректное добавление связей между категориями")
+    void createCategoryLink(String parent, String child) {
+        Assertions.assertEquals(ResponseEntity.ok("Link successfully create!"),
+                categoryService.createCategoryLink(new CategoryLink(parent, child)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Машины,Легковые машины", "Машины,Внедорожники"})
+    @Order(35)
+    @DisplayName(value = "-> Попытка добавить существующую связь")
+    void createCategoryLinkShouldThrowException4(String parent, String child) {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink(parent, child)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Легковые машины,Внедорожники", "Внедорожники,Легковые машины"})
+    @Order(40)
+    @DisplayName(value = "-> Попытка использовать категорию child в качестве child у другой категории")
+    void createCategoryLinkShouldThrowException5(String parent, String child) {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink(parent, child)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"Легковые машины,Машины", "Внедорожники,Машины"})
+    @Order(45)
+    @DisplayName(value = "-> Попытка использовать категорию parent в качестве child у своих же child")
+    void createCategoryLinkShouldThrowException6(String parent, String child) {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> categoryService.createCategoryLink(new CategoryLink(parent, child)));
+    }
+
+    @Test
+    @Order(50)
+    @DisplayName(value = "-> Проверка метода на возвращение категорий у которых нет parent")
+    void getCategoryListWhereParentIdIsNull() {
+        addSomeCorrectCategories();
+        addSomeCorrectLinks();
+        Assertions.assertEquals(3, categoryService.getCategoryListWhereParentIdIsNull().size());
+    }
+
+    void addSomeCorrectCategories() {
+        categoryService.createCategory(new Category("Легковая машина №1"));
+        categoryService.createCategory(new Category("Легковая машина №2"));
+        categoryService.createCategory(new Category("Легковая машина №3"));
+        categoryService.createCategory(new Category("Легковая машина №4"));
+        categoryService.createCategory(new Category("Внедорожная машина №1"));
+        categoryService.createCategory(new Category("Внедорожная машина №2"));
+        categoryService.createCategory(new Category("Внедорожная машина №3"));
+        categoryService.createCategory(new Category("Еда"));
+        categoryService.createCategory(new Category("Random category 1"));
+        categoryService.createCategory(new Category("Random category 2"));
+        categoryService.createCategory(new Category("Random category 3"));
+    }
+
+    void addSomeCorrectLinks() {
+        categoryService.createCategoryLink(new CategoryLink("Легковые машины", "Легковая машина №1"));
+        categoryService.createCategoryLink(new CategoryLink("Легковые машины", "Легковая машина №2"));
+        categoryService.createCategoryLink(new CategoryLink("Легковые машины", "Легковая машина №3"));
+        categoryService.createCategoryLink(new CategoryLink("Легковые машины", "Легковая машина №4"));
+        categoryService.createCategoryLink(new CategoryLink("Внедорожники", "Внедорожная машина №1"));
+        categoryService.createCategoryLink(new CategoryLink("Внедорожники", "Внедорожная машина №2"));
+        categoryService.createCategoryLink(new CategoryLink("Внедорожники", "Внедорожная машина №3"));
+        categoryService.createCategoryLink(new CategoryLink("Random category 1", "Random category 2"));
+        categoryService.createCategoryLink(new CategoryLink("Random category 1", "Random category 3"));
+    }
+
+    @Test
+    @Order(55)
+    @DisplayName(value = "-> Попытка добавить статью с несуществующей категорией")
+    void createArticleShouldThrowException1() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Несуществующая категория про машину"), "Admin"));
+    }
+
+    @Test
+    @Order(55)
+    @DisplayName(value = "-> Попытка добавить статью с категорией у которой есть потомки")
+    void createArticleShouldThrowException2() {
+        Assertions.assertThrows(ResponseStatusException.class,
+                () -> articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Машины"), "Admin"));
+    }
+
+    @Test
+    @Order(60)
+    @DisplayName(value = "-> Добавление категории")
+    void createArticle() {
+        Assertions.assertEquals(ResponseEntity.ok("Article successfully added!"),
+                articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Легковая машина №1"), "admin"));
+        addSomeArticles();
+    }
+
+    void addSomeArticles() {
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №2"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №3"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
+        articleService.createArticle(new ArticleRequest("Название", "Контент", "Легковая машина №1"), "admin");
+    }
+
+    @Test
+    @Order(65)
+    @DisplayName(value = "-> Проверка на добавление категорий")
+    void getArticleList() {
+        List<Article> articleList = articleService.getArticleList();
+        Assertions.assertEquals(9, articleList.size());
+    }
+
+    @Test
+    @Order(65)
+    @DisplayName(value = "-> Проверка на работоспасобность метода")
+    void findArticlesForTheLastSevenDays() {
+        List<Article> articleList = articleService.findArticlesForTheLastSevenDays();
+        Assertions.assertEquals(9, articleList.size());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {",Content", "Title,",
+            "1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111symbols101,Content"})
+    @Order(70)
+    @DisplayName(value = "-> ")
+    void createArticleShouldThrowException3(String title, String content) {
+        Assertions.assertThrows(Exception.class,
+                () -> articleService.createArticle(new ArticleRequest(title, content, "Легковая машина #1"), "admin"));
+    }
+
+    @Test
+    @Order(75)
+    @DisplayName("getStatisticsForTheLastWeek -> Проверка метода на работоспособность")
+    void getStatisticsForTheLastWeek() {
+        LocalDate now = LocalDate.now();
+        Assertions.assertEquals(Map.of(now, 9L,
+                now.minusDays(1), 0L, now.minusDays(2), 0L,
+                now.minusDays(3), 0L, now.minusDays(4), 0L,
+                now.minusDays(5), 0L, now.minusDays(6), 0L),
+                statisticsService.getStatisticsForTheLastWeek());
+    }
+
+    @Test
+    @Order(75)
+    @DisplayName("getStatisticsByCategory -> Проверка метода на работоспособность")
+    void getStatisticsByCategory() {
+        Assertions.assertEquals(Map.of("Легковая машина №1", 5L, "Легковая машина №2", 3L, "Легковая машина №3", 1L, "Легковая машина №4", 0L,
+                        "Внедорожная машина №1", 0L, "Внедорожная машина №2", 0L, "Внедорожная машина №3", 0L,
+                        "Random category 2", 0L, "Random category 3", 0L, "Еда", 0L),
+                statisticsService.getStatisticsByCategory());
+    }
+
+    @Test
+    @Order(75)
+    @DisplayName("getStatisticsByAuthor -> Проверка метода на работоспособность")
+    void getStatisticsByAuthor() {
+        Assertions.assertEquals(Map.of("admin", 9L),
+                statisticsService.getStatisticsByAuthor());
+    }
+
+    @Test
+    @Order(75)
+    @DisplayName("getStatisticsBetweenDate -> Проверка метода на работоспособность")
+    void checkCorrectOutputStatisticsTest9() {
+        LocalDate now = LocalDate.now();
+        Assertions.assertEquals(Map.of(now, 9L, now.minusDays(1), 0L, now.minusDays(2), 0L),
+                statisticsService.getStatisticsBetweenDate(now, now.minusDays(2)));
+    }
+
+}

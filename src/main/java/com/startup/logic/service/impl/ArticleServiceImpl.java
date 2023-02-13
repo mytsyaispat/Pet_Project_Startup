@@ -40,7 +40,7 @@ public class ArticleServiceImpl implements ArticleService {
     public ResponseEntity<String> createArticle(ArticleRequest articleRequest, String author) {
         Optional<Category> oCategory = categoryService.getCategoryByName(articleRequest.getCategory());
         if (oCategory.isEmpty())
-            return new ResponseEntity<>("Category not found!", HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found!");
         Category category = oCategory.get();
         if (!category.getCategoryList().isEmpty())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Данную категорию нельзя использовать, тк у неё есть наследники!");
