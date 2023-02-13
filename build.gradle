@@ -50,8 +50,6 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.5.3'
 	// Hibernate
 	implementation 'org.hibernate:hibernate-core'
-	// Hibernate cache
-	implementation 'org.hibernate:hibernate-ehcache'
 	// Test
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 	// JUnit5

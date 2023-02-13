@@ -5,8 +5,6 @@ import java.util.Map;
 
 public interface StatisticsService {
 
-    Map<LocalDate, Long> getStatisticsForTheLastWeek();
-
     Map<String, Long> getStatisticsByCategory();
 
     Map<String, Long> getStatisticsByAuthor();

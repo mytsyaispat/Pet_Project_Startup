@@ -19,19 +19,19 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PostMapping("role")
+    @PostMapping("admin/role")
     public ResponseEntity<?> createRole(Role role) {
         return roleService.createRole(role);
     }
 
-    @GetMapping("roles")
+    @GetMapping("admin/roles")
     public ResponseEntity<Set<Role>> getRoles() {
         Set<Role> roleSet = roleService.getRoles();
         if (roleSet.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(roleSet);
     }
 
-    @GetMapping("role/{id}")
+    @GetMapping("admin/role/{id}")
     public ResponseEntity<Role> getRole(@PathVariable Long id) {
         Optional<Role> roleOptional = roleService.getRoleById(id);
         if (roleOptional.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found!");

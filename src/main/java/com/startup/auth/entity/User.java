@@ -24,28 +24,28 @@ public class User implements UserDetails {
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     public User(String username, String password) {
-        this.username = username;
+        this.username = username.toLowerCase();
         this.password = password;
     }
 
     public User(String username, String password, Set<Role> roleList) {
         this.username = username.toLowerCase();
         this.password = password;
-        this.roles = new HashSet<>(roleList);
+        this.roles = new ArrayList<>(roleList);
     }
 
     public User() {}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> authoritySet= new HashSet<>();
+        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
         for (Role role : roles) {
-            authoritySet.add(new SimpleGrantedAuthority("ROLE_" + role.getName().toUpperCase()));
+            authorityList.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
         }
-        return authoritySet;
+        return authorityList;
     }
 
     public Long getId() {
@@ -77,31 +77,34 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    @JsonIgnore
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
     }
 
     @Override

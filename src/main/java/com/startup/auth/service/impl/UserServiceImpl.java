@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         Optional<Role> roleOptional = roleService.getRoleByName(Roles.USER.name());
         if (roleOptional.isEmpty())
             throw new RuntimeException("Роль User отсутствует в базе данных");
-        user.setRoles(Set.of(roleOptional.get()));
+        user.addRole(roleOptional.get());
         userRepository.save(user);
         return ResponseEntity.ok("User successfully registered!");
     }

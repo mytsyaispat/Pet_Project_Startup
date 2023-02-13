@@ -250,18 +250,6 @@ class IntegrationTest {
 
     @Test
     @Order(75)
-    @DisplayName("getStatisticsForTheLastWeek -> Проверка метода на работоспособность")
-    void getStatisticsForTheLastWeek() {
-        LocalDate now = LocalDate.now();
-        Assertions.assertEquals(Map.of(now, 9L,
-                        now.minusDays(1), 0L, now.minusDays(2), 0L,
-                        now.minusDays(3), 0L, now.minusDays(4), 0L,
-                        now.minusDays(5), 0L, now.minusDays(6), 0L),
-                statisticsService.getStatisticsForTheLastWeek());
-    }
-
-    @Test
-    @Order(75)
     @DisplayName("getStatisticsByCategory -> Проверка метода на работоспособность")
     void getStatisticsByCategory() {
         Assertions.assertEquals(Map.of("Легковая машина №1", 5L, "Легковая машина №2", 3L, "Легковая машина №3", 1L, "Легковая машина №4", 0L,

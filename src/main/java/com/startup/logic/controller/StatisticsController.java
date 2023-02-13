@@ -21,11 +21,6 @@ public class StatisticsController {
         this.statisticsService = statisticsService;
     }
 
-    @GetMapping("date/week")
-    public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
-        return ResponseEntity.ok(statisticsService.getStatisticsForTheLastWeek());
-    }
-
     @GetMapping("category")
     public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
         return ResponseEntity.ok(statisticsService.getStatisticsByCategory());

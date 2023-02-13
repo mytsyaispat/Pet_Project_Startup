@@ -1,15 +1,15 @@
 package com.startup.config;
 
-import com.startup.auth.service.UserService;
+import com.startup.logic.entity.Roles;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,34 +19,37 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserService userService) {
-        this.userService = userService;
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf().disable()
                 .authorizeHttpRequests(auth -> {
-                    auth.mvcMatchers("/**").permitAll();
+                    auth.mvcMatchers("startup/admin/**").hasRole(Roles.ADMIN.name());
+                    auth.mvcMatchers(HttpMethod.POST, "startup/user").permitAll();
+                    auth.mvcMatchers(HttpMethod.GET, "startup/articles", "startup/article/*").permitAll();
+                    auth.anyRequest().authenticated();
                 })
-                .httpBasic(Customizer.withDefaults())
-                .build();
+                .httpBasic()
+                .and().build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userService)
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder())
                 .and().build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(13);
+        return new BCryptPasswordEncoder();
     }
 
 }
