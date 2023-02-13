@@ -29,7 +29,7 @@ public class CategoryController {
 
     @PostMapping("admin/category-link")
     public ResponseEntity<String> createCategoryLink(@Valid @RequestBody CategoryLink categoryLink) {
-        return categoryService.createCategoryChild(categoryLink);
+        return categoryService.createCategoryLink(categoryLink);
     }
 
     @GetMapping("admin/category/{id}")

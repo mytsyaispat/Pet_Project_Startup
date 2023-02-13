@@ -4,8 +4,6 @@ import com.startup.logic.entity.Category;
 import com.startup.logic.controller.entity.CategoryLink;
 import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.CategoryService;
-import org.postgresql.util.PSQLException;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Метод выстраивает иерархию (предок -> потомок) между категориями
      */
     @Override
-    public ResponseEntity<String> createCategoryChild(CategoryLink categoryLink) {
+    public ResponseEntity<String> createCategoryLink(CategoryLink categoryLink) {
         if (categoryLink.getChildName().equals(categoryLink.getParentName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Категория не может наследоваться от самой себя!");
         Optional<Category> optionalCategoryParent = getCategoryByName(categoryLink.getParentName());
@@ -65,7 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
             for (Category category : categoryParentList)
                 if (category.getName().equals(categoryChild.getName()))
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Такая связь уже есть!");
-        Optional<Long> isInherited = Optional.ofNullable(categoryRepository.getParentIdByCategory(categoryChild));
+        Optional<Category> isInherited = Optional.ofNullable(categoryChild.getCategory());
         if (isInherited.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Category child уже учавствует в иерархии");
         Category currentCategory = categoryParent;
@@ -91,7 +89,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getCategoryListWhereParentIdIsNull() {
-        List<Category> result = categoryRepository.findAllWhereParentIdIsNull();
-        return null;
+        return categoryRepository.findAllWhereParentIdIsNull();
     }
 }

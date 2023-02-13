@@ -7,6 +7,7 @@ import com.startup.logic.entity.Article;
 import com.startup.logic.entity.Category;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public class Values {
@@ -17,10 +18,10 @@ public class Values {
     };
 
     public static final Category[] categoryArray = new Category[]{
-            new Category(1L, "Category1"),
-            new Category(2L, "Category2"),
-            new Category(3L, "Category3"),
-            new Category(4L, "Category4")
+            new Category(1L, "Category1", List.of(), null),
+            new Category(2L, "Category2", List.of(), null),
+            new Category(3L, "Category3", List.of(), null),
+            new Category(4L, "Category4", List.of(), null)
     };
 
     public static final User[] userArray = new User[]{

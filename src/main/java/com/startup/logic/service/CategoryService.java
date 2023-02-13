@@ -12,7 +12,7 @@ public interface CategoryService {
     List<Category> getCategoryList();
     ResponseEntity<String> createCategory(Category category);
     Optional<Category> getCategoryByName(String name);
-    ResponseEntity<String> createCategoryChild(CategoryLink categoryLink);
+    ResponseEntity<String> createCategoryLink(CategoryLink categoryLink);
 
     Optional<Category> getCategoryById(Long id);
 

@@ -48,6 +48,13 @@ public class Category {
         this.categoryList = new ArrayList<>(categoryList);
     }
 
+    public Category(Long id, String name, List<Category> categoryList, Category category) {
+        this.id = id;
+        this.name = name;
+        this.categoryList = categoryList;
+        this.category = category;
+    }
+
     public Category() {}
 
     public Long getId() {

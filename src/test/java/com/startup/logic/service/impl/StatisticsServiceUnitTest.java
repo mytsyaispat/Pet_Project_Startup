@@ -6,7 +6,6 @@ import com.startup.logic.entity.Category;
 import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
 import com.startup.logic.service.StatisticsService;
-import com.startup.logic.service.impl.StatisticsServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
