@@ -2,7 +2,6 @@ package com.startup.logic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -10,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "category",
         uniqueConstraints = @UniqueConstraint(name = "UniqueParentAndChild", columnNames = {"name", "parent_id"})
 )

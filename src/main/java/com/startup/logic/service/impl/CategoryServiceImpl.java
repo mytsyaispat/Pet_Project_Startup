@@ -4,6 +4,9 @@ import com.startup.logic.controller.entity.CategoryLink;
 import com.startup.logic.entity.Category;
 import com.startup.logic.repository.CategoryRepository;
 import com.startup.logic.service.CategoryService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Метод создаёт категорию в базе данных
      */
     @Override
-    @Transactional
+    @CachePut(value = "category", key = "#category.name")
     public ResponseEntity<String> createCategory(Category category) {
         Optional<Category> oCategory = getCategoryByName(category.getName());
         if (oCategory.isPresent())
@@ -44,6 +47,8 @@ public class CategoryServiceImpl implements CategoryService {
     /**
      * Метод возвращает категорию по имени
      */
+    @Override
+    @Cacheable(value = "category")
     public Optional<Category> getCategoryByName(String name) {
         return categoryRepository.findByName(name);
     }
@@ -52,14 +57,15 @@ public class CategoryServiceImpl implements CategoryService {
      * Метод выстраивает иерархию (предок -> потомок) между категориями
      */
     @Override
+    @CacheEvict(value = "category", allEntries = true)
     public ResponseEntity<String> createCategoryLink(CategoryLink categoryLink) {
         if (categoryLink.getChildName().equals(categoryLink.getParentName()))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Категория не может наследоваться от самой себя!");
-        Optional<Category> optionalCategoryParent = getCategoryByName(categoryLink.getParentName());
+        Optional<Category> optionalCategoryParent = categoryRepository.findByName(categoryLink.getParentName());
         if (optionalCategoryParent.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category parent is not found");
         Category categoryParent = optionalCategoryParent.get();
-        Optional<Category> optionalCategoryChild = getCategoryByName(categoryLink.getChildName());
+        Optional<Category> optionalCategoryChild = categoryRepository.findByName(categoryLink.getChildName());
         if (optionalCategoryChild.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category child is not found");
         Category categoryChild = optionalCategoryChild.get();
@@ -91,6 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
      * Метод возвращает категорию по id
      */
     @Override
+    @Cacheable(value = "category")
     public Optional<Category> getCategoryById(Long id) {
         return categoryRepository.findById(id);
     }

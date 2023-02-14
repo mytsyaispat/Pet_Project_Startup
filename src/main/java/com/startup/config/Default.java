@@ -41,8 +41,9 @@ public class Default {
     private void createAdminIfNotCreated() {
         if (userService.findUserByUsername("admin").isEmpty()) {
             Optional<Role> roleOptional = roleService.getRoleByName(Roles.ADMIN.name());
-            if (roleOptional.isEmpty())
-                throw new RuntimeException("Роли Admin нет в базе данных");
+            while (roleOptional.isEmpty()) {
+                createDefaultRolesIfNotCreated();
+            }
             userService.createUser(new User("admin", "admin", Set.of(roleOptional.get())));
         }
     }

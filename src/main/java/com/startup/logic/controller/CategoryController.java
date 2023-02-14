@@ -32,7 +32,7 @@ public class CategoryController {
         return categoryService.createCategoryLink(categoryLink);
     }
 
-    @GetMapping("admin/category/{id}")
+    @GetMapping("category/{id}")
     public ResponseEntity<Map<String, Object>> getCategoryById(@PathVariable Long id) {
         Optional<Category> categoryOptional = categoryService.getCategoryById(id);
         if (categoryOptional.isEmpty())

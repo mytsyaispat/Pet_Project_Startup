@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -39,8 +38,10 @@ public class UserServiceImpl implements UserService {
         if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Optional<Role> roleOptional = roleService.getRoleByName(Roles.USER.name());
-        if (roleOptional.isEmpty())
-            throw new RuntimeException("Роль User отсутствует в базе данных");
+        while (roleOptional.isEmpty()) {
+            roleService.createRole(new Role("USER"));
+            roleOptional = roleService.getRoleByName(Roles.USER.name());
+        }
         user.addRole(roleOptional.get());
         userRepository.save(user);
         return ResponseEntity.ok("User successfully registered!");
