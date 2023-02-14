@@ -28,7 +28,8 @@ public class RoleServiceImpl implements RoleService {
     @CacheEvict(value = {"roles", "role"}, allEntries = true)
     public ResponseEntity<String> createRole(Role role) {
         Optional<Role> roleOptional = roleRepository.findByName(role.getName());
-        if (roleOptional.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This role has already been created!");
+        if (roleOptional.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This role has already been created!");
         roleRepository.save(role);
         return ResponseEntity.ok("Role successfully created!");
     }

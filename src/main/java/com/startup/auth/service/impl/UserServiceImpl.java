@@ -1,11 +1,11 @@
 package com.startup.auth.service.impl;
 
 import com.startup.auth.entity.Role;
-import com.startup.logic.entity.Roles;
 import com.startup.auth.entity.User;
 import com.startup.auth.repository.UserRepository;
 import com.startup.auth.service.RoleService;
 import com.startup.auth.service.UserService;
+import com.startup.logic.entity.Roles;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +35,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public ResponseEntity<String> createUser(User user) {
         Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
-        if (optionalUser.isPresent()) throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
+        if (optionalUser.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Optional<Role> roleOptional = roleService.getRoleByName(Roles.USER.name());
         while (roleOptional.isEmpty()) {
