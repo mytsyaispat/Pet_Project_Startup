@@ -49,6 +49,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	// Postgresql
 	implementation 'org.postgresql:postgresql:42.5.3'
+	// H2
+	implementation 'com.h2database:h2'
 	// Hibernate
 	implementation 'org.hibernate:hibernate-core'
 	// Test

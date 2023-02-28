@@ -30,9 +30,9 @@ public class SecurityConfig {
         return http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> {
-                    auth.mvcMatchers("startup/admin/**").hasRole(Roles.ADMIN.name());
-                    auth.mvcMatchers(HttpMethod.POST, "startup/user").permitAll();
-                    auth.mvcMatchers(HttpMethod.GET, "startup/articles", "startup/article/*").permitAll();
+                    auth.mvcMatchers("/admin/**").hasRole(Roles.ADMIN.name());
+                    auth.mvcMatchers(HttpMethod.POST, "/user").permitAll();
+                    auth.mvcMatchers(HttpMethod.GET, "/articles", "/article/*").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .httpBasic()

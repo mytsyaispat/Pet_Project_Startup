@@ -1,15 +1,18 @@
 package com.startup.auth.controller;
 
-import com.startup.auth.entity.User;
+import com.startup.auth.controller.dto.UserDTO;
 import com.startup.auth.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
-@RestController
+@RestController()
+@RequestMapping("user")
 public class UserController {
 
     private final UserService userService;
@@ -18,9 +21,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("user")
-    public ResponseEntity<String> register(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+    @PostMapping
+    public ResponseEntity<String> register(@Valid @RequestBody UserDTO userDTO) {
+        userService.createUser(userDTO);
+        return new ResponseEntity<>("User successfully registered!", HttpStatus.CREATED);
     }
 
 }

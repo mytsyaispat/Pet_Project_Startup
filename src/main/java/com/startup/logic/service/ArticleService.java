@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ArticleService {
 
-    ResponseEntity<String> createArticle(ArticleRequest article, String author);
+    Article createArticle(ArticleRequest article, String author);
 
     List<Article> findArticlesForTheLastSevenDays();
 

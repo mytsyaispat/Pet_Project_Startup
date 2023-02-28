@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("articles")
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -23,19 +24,19 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    @PostMapping("article")
-    public ResponseEntity<?> createArticle(@Valid @RequestBody ArticleRequest articleRequest, @AuthenticationPrincipal User user) {
-        return articleService.createArticle(articleRequest, user.getUsername());
+    @PostMapping
+    public ResponseEntity<String> createArticle(@Valid @RequestBody ArticleRequest articleRequest, @AuthenticationPrincipal User user) {
+        articleService.createArticle(articleRequest, user.getUsername());
+        return new ResponseEntity<>("Article successfully added!", HttpStatus.CREATED);
     }
 
-    @GetMapping("articles")
+    @GetMapping
     public ResponseEntity<List<Article>> getArticleList() {
         List<Article> articleList = articleService.getArticleList();
-        if (articleList.isEmpty()) throw new ResponseStatusException(HttpStatus.NO_CONTENT);
         return ResponseEntity.ok(articleList);
     }
 
-    @GetMapping("article/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Article> getArticleById(@PathVariable Long id) {
         Optional<Article> articleOptional = articleService.getArticleById(id);
         if (articleOptional.isEmpty()) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article not found!");

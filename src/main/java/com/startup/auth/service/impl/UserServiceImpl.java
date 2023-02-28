@@ -1,5 +1,6 @@
 package com.startup.auth.service.impl;
 
+import com.startup.auth.controller.dto.UserDTO;
 import com.startup.auth.entity.Role;
 import com.startup.auth.entity.User;
 import com.startup.auth.repository.UserRepository;
@@ -8,7 +9,6 @@ import com.startup.auth.service.UserService;
 import com.startup.logic.entity.Roles;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,19 +33,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public ResponseEntity<String> createUser(User user) {
-        Optional<User> optionalUser = userRepository.findByUsername(user.getUsername());
+    public User createUser(UserDTO userDTO) {
+        Optional<User> optionalUser = userRepository.findByUsername(userDTO.password);
         if (optionalUser.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already in use!");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User()
+                .setUsername(userDTO.username)
+                .setPassword(passwordEncoder.encode(userDTO.password));
         Optional<Role> roleOptional = roleService.getRoleByName(Roles.USER.name());
-        while (roleOptional.isEmpty()) {
-            roleService.createRole(new Role("USER"));
-            roleOptional = roleService.getRoleByName(Roles.USER.name());
-        }
+        if (roleOptional.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role USER in not fount id DB!");
         user.addRole(roleOptional.get());
-        userRepository.save(user);
-        return ResponseEntity.ok("User successfully registered!");
+        return userRepository.save(user);
     }
 
     @Override

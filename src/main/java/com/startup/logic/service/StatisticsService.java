@@ -12,4 +12,5 @@ public interface StatisticsService {
     Map<LocalDate, Long> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate);
 
 
+    Map<LocalDate, Long> getStatisticsForTheLastWeek();
 }

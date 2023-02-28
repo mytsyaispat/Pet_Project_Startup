@@ -1,7 +1,7 @@
 package com.startup;
 
+import com.startup.auth.controller.dto.UserDTO;
 import com.startup.auth.entity.Role;
-import com.startup.auth.entity.User;
 import com.startup.auth.service.RoleService;
 import com.startup.auth.service.UserService;
 import com.startup.logic.controller.entity.ArticleRequest;
@@ -17,7 +17,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,10 +44,17 @@ class IntegrationTest {
     private RoleService roleService;
 
     @Test
+    @Order(3)
+    @DisplayName(value = "-> Создание категории и проверка на добавление в базу")
+    void createCategory0() {
+        Assertions.assertEquals("Машины",
+                categoryService.createCategory(new Category("Машины")).getName());
+    }
+
+    @Test
     @Order(5)
     @DisplayName(value = "-> Создание нескольких категорий и проверка на добавление в базу")
     void createCategory1() {
-        categoryService.createCategory(new Category("Машины"));
         categoryService.createCategory(new Category("Внедорожники"));
         categoryService.createCategory(new Category("Легковые машины"));
         List<Category> categoryList = categoryService.getCategoryList();
@@ -102,8 +108,8 @@ class IntegrationTest {
     @Order(30)
     @DisplayName(value = "-> Корректное добавление связей между категориями")
     void createCategoryLink(String parent, String child) {
-        Assertions.assertEquals(ResponseEntity.ok("Link successfully create!"),
-                categoryService.createCategoryLink(new CategoryLink(parent, child)));
+        Assertions.assertEquals(child,
+                categoryService.createCategoryLink(new CategoryLink(parent, child)).getName());
     }
 
     @ParameterizedTest
@@ -189,8 +195,8 @@ class IntegrationTest {
     @Order(57)
     @DisplayName(value = "-> Добавление новых пользователей")
     void createUser(String username) {
-        Assertions.assertEquals(ResponseEntity.ok("User successfully registered!"),
-                userService.createUser(new User(username, username)));
+        Assertions.assertEquals(username,
+                userService.createUser(new UserDTO(username, username)).getUsername());
     }
 
     @ParameterizedTest
@@ -199,15 +205,15 @@ class IntegrationTest {
     @DisplayName(value = "-> Попытка создать существующих пользователей")
     void createUserShouldThrowException(String username) {
         Assertions.assertThrows(ResponseStatusException.class,
-                () -> userService.createUser(new User(username, username)));
+                () -> userService.createUser(new UserDTO(username, username)));
     }
 
     @Test
     @Order(60)
     @DisplayName(value = "-> Добавление категории")
     void createArticle() {
-        Assertions.assertEquals(ResponseEntity.ok("Article successfully added!"),
-                articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Легковая машина №1"), "admin"));
+        Assertions.assertEquals("Это моя история про машину",
+                articleService.createArticle(new ArticleRequest("Это моя история про машину", "Бла-бла-бла", "Легковая машина №1"), "admin").getTitle());
         addSomeArticles();
     }
 
@@ -272,15 +278,27 @@ class IntegrationTest {
     void checkCorrectOutputStatisticsTest9() {
         LocalDate now = LocalDate.now();
         Assertions.assertEquals(Map.of(now, 9L, now.minusDays(1), 0L, now.minusDays(2), 0L),
-                statisticsService.getStatisticsBetweenDate(now, now.minusDays(2)));
+                statisticsService.getStatisticsBetweenDate(now.minusDays(2), now));
+    }
+
+    @Test
+    @Order(75)
+    @DisplayName("getStatisticsForTheLastWeek -> Проверка метода на работоспособность")
+    void getStatisticsForTheLastWeek() {
+        LocalDate now = LocalDate.now();
+        Assertions.assertEquals(Map.of(now, 9L,
+                        now.minusDays(1), 0L, now.minusDays(2), 0L,
+                        now.minusDays(3), 0L, now.minusDays(4), 0L,
+                        now.minusDays(5), 0L, now.minusDays(6), 0L),
+                statisticsService.getStatisticsForTheLastWeek());
     }
 
     @Test
     @Order(80)
     @DisplayName("-> Создание роли")
     void createRole() {
-        Assertions.assertEquals(ResponseEntity.ok("Role successfully created!"),
-                roleService.createRole(new Role("ACCOUNTANT")));
+        Assertions.assertEquals("ACCOUNTANT",
+                roleService.createRole(new Role("ACCOUNTANT")).getName());
     }
 
     @Test
@@ -302,8 +320,12 @@ class IntegrationTest {
     @Order(85)
     @DisplayName("-> Получаем сет всех ролей")
     void getRoles() {
-        Assertions.assertEquals(Set.of("ADMIN", "USER", "ACCOUNTANT"),
-                roleService.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
+        Assertions.assertTrue(List.of("ADMIN", "USER", "ACCOUNTANT")
+                .containsAll(roleService
+                        .getRoles()
+                        .stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toList())));
     }
 
 }

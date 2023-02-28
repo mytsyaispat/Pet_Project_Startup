@@ -23,16 +23,26 @@ public class StatisticsController {
 
     @GetMapping("category")
     public ResponseEntity<Map<String, Long>> getStatisticsByCategory() {
-        return ResponseEntity.ok(statisticsService.getStatisticsByCategory());
+        Map<String, Long> body = statisticsService.getStatisticsByCategory();
+        return ResponseEntity.ok(body);
     }
 
     @GetMapping("author")
     public ResponseEntity<Map<String, Long>> getStatisticsByAuthor() {
-        return ResponseEntity.ok(statisticsService.getStatisticsByAuthor());
+        Map<String, Long> body = statisticsService.getStatisticsByAuthor();
+        return ResponseEntity.ok(body);
     }
 
-    @GetMapping("date/between")
+    @GetMapping("date")
     public ResponseEntity<Map<LocalDate, Long>> getStatisticsBetweenDate(@RequestBody DateRequest dateRequest) {
-        return ResponseEntity.ok(statisticsService.getStatisticsBetweenDate(dateRequest.getFirstDate(), dateRequest.getSecondDate()));
+        Map<LocalDate, Long> body = statisticsService.getStatisticsBetweenDate(dateRequest.getFirstDate(), dateRequest.getSecondDate());
+        return ResponseEntity.ok(body);
     }
+
+    @GetMapping("week")
+    public ResponseEntity<Map<LocalDate, Long>> getStatisticsForTheLastWeek() {
+        Map<LocalDate, Long> body = statisticsService.getStatisticsForTheLastWeek();
+        return ResponseEntity.ok(body);
+    }
+
 }

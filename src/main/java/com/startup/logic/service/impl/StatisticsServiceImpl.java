@@ -5,7 +5,9 @@ import com.startup.logic.entity.Category;
 import com.startup.logic.service.ArticleService;
 import com.startup.logic.service.CategoryService;
 import com.startup.logic.service.StatisticsService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StatisticsServiceImpl implements StatisticsService {
@@ -68,17 +71,13 @@ public class StatisticsServiceImpl implements StatisticsService {
      */
     @Override
     public Map<LocalDate, Long> getStatisticsBetweenDate(LocalDate firstDate, LocalDate secondDate) {
+        if (firstDate.isAfter(secondDate)) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dates must be in chronological order!");
         List<Article> articleList = articleService.getArticleList();
         return createStatisticsByDatesBetween(firstDate, secondDate, articleList);
     }
 
 
     private Map<LocalDate, Long> createStatisticsByDatesBetween(LocalDate firstDate, LocalDate secondDate, List<Article> articleList) {
-        if (firstDate.isAfter(secondDate)) {
-            LocalDate swap = firstDate;
-            firstDate = secondDate;
-            secondDate = swap;
-        }
         Map<LocalDate, Long> result = new HashMap<>();
         for (; firstDate.isBefore(secondDate) || firstDate.isEqual(secondDate); firstDate = firstDate.plusDays(1)) {
             result.put(firstDate, getCountOfArticle(articleList, firstDate));
@@ -90,6 +89,26 @@ public class StatisticsServiceImpl implements StatisticsService {
         return articleList.stream()
                 .filter(article -> article.getDate().toLocalDate().isEqual(firstDate))
                 .count();
+    }
+
+    /**
+     * Метод возвращает мапу в которой хранится статистика в виде Дата -> Количество созданных статей за дату.
+     * Статистика собирается за последнюю неделю
+     */
+    @Override
+    public Map<LocalDate, Long> getStatisticsForTheLastWeek() {
+        List<Article> articleList = articleService.findArticlesForTheLastSevenDays();
+        if (articleList.isEmpty()) return Collections.emptyMap();
+        return createStatisticsForTheLastWeek(articleList);
+    }
+
+    private Map<LocalDate, Long> createStatisticsForTheLastWeek(List<Article> articleList) {
+        return Stream.iterate(0, i -> i + 1)
+                .limit(7)
+                .collect(Collectors.toMap(i -> LocalDate.now().minusDays(i),
+                        i -> articleList.stream()
+                                .filter(article -> article.getDate().toLocalDate().equals(LocalDate.now().minusDays(i)))
+                                .count()));
     }
 
 }

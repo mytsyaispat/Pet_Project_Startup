@@ -6,13 +6,12 @@ import com.startup.auth.service.RoleService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -26,12 +25,11 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     @CacheEvict(value = {"roles", "role"}, allEntries = true)
-    public ResponseEntity<String> createRole(Role role) {
+    public Role createRole(Role role) {
         Optional<Role> roleOptional = roleRepository.findByName(role.getName());
         if (roleOptional.isPresent())
             throw new ResponseStatusException(HttpStatus.CONFLICT, "This role has already been created!");
-        roleRepository.save(role);
-        return ResponseEntity.ok("Role successfully created!");
+        return roleRepository.save(role);
     }
 
     @Override
@@ -42,7 +40,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     @Cacheable(value = "roles")
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roleRepository.findAll();
     }
 

@@ -24,12 +24,14 @@ public class CategoryController {
 
     @PostMapping("admin/category")
     public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        return categoryService.createCategory(category);
+        categoryService.createCategory(category);
+        return new ResponseEntity<>("Category was successfully added!", HttpStatus.CREATED);
     }
 
     @PostMapping("admin/category-link")
     public ResponseEntity<String> createCategoryLink(@Valid @RequestBody CategoryLink categoryLink) {
-        return categoryService.createCategoryLink(categoryLink);
+        categoryService.createCategoryLink(categoryLink);
+        return new ResponseEntity<>("Link successfully create!", HttpStatus.CREATED);
     }
 
     @GetMapping("category/{id}")
